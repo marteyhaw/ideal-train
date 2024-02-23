@@ -10,12 +10,15 @@ import { Select } from "@/app/ui/forms/select";
 import { Label } from "@/app/ui/forms/label";
 import { Input } from "@/app/ui/forms/input";
 import { TextArea } from "@/app/ui/forms/textarea";
+import Link from "next/link";
 
 export default function WaybillForm({
+  modal,
   customers,
   offices,
   employees,
 }: {
+  modal: React.ReactNode;
   customers: CustomerField[];
   offices: OfficeField[];
   employees: EmployeeField[];
@@ -65,10 +68,24 @@ export default function WaybillForm({
 
         {/* Cargo List */}
         <div className="flex w-full h-64 bg-gray-50 mb-3">
-          <button className="flex items-center m-auto rounded-md border p-2 hover:bg-gray-100 ">
+          {/* {cargoList.map((cargo, index) => (
+            <div key={index}>
+                <table>
+                  <thead>
+                    <tr>
+                      <th></th>
+                    </tr>
+                  </thead>
+                </table>
+            </div>
+          ))} */}
+          <Link
+            href="dashboard/waybills/add-cargos"
+            className="flex items-center m-auto rounded-md border p-2 hover:bg-gray-100 "
+          >
             <PlusIcon className="w-5" />
             <span>Add to Cargo</span>
-          </button>
+          </Link>
         </div>
 
         {/* Bottom Section */}

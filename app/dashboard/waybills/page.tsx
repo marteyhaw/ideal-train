@@ -31,6 +31,7 @@ export default async function Page() {
         Create Waybill
       </h1>
       <WaybillForm
+        modal
         customers={customers}
         offices={offices}
         employees={employees}
