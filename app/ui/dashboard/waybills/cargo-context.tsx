@@ -1,19 +1,44 @@
-// import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 
-// const CargoContext = createContext(null);
+interface CargoItem {
+    quantity: number;
+    unit: string;
+    description: string;
+    length: number;
+    width: number;
+    height: number;
+    weight: number;
+    declaredValue: number;
+}
 
-// export const useCargo = () => useContext(CargoContext);
+interface CargoContextValue {
+    cargoList: CargoItem[];
+    setCargoList: Dispatch<SetStateAction<CargoItem[]>>;
+    handleCargoSubmit: (newCargo: CargoItem[]) => void;
+}
 
-// export const CargoProvider = ({ children }) => {
-//     const [cargoList, setCargoList] = useState([]);
+const CargoContext = createContext<CargoContextValue | null>(null);
 
-//     const handleCargoSubmit = (newCargo) => {
-//         setCargoList([...cargoList, ...newCargo]);
-//     };
+export const useCargo = () => {
+    const context = useContext(CargoContext);
+    if (context === null) throw new Error('useCargo must be used within a CargoProvider');
+    return context;
+};
 
-//     return (
-//         <CargoContext.Provider value={{ cargoList, handleCargoSubmit }}>
-//             {children}
-//         </CargoContext.Provider>
-//     );
-// };
+interface CargoProviderProps {
+    children: ReactNode;
+}
+
+export const CargoProvider: React.FC<CargoProviderProps> = ({ children }) => {
+    const [cargoList, setCargoList] = useState<CargoItem[]>([]);
+
+    const handleCargoSubmit = (newCargo: CargoItem[]) => {
+        setCargoList((currentCargoList) => [...currentCargoList, ...newCargo]);
+    };
+
+    return (
+        <CargoContext.Provider value={{ cargoList, setCargoList, handleCargoSubmit }}>
+            {children}
+        </CargoContext.Provider>
+    );
+};

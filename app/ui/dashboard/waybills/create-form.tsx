@@ -11,6 +11,7 @@ import { Label } from "@/app/ui/forms/label";
 import { Input } from "@/app/ui/forms/input";
 import { TextArea } from "@/app/ui/forms/textarea";
 import Link from "next/link";
+import { useCargo } from "./cargo-context";
 
 export default function WaybillForm({
   modal,
@@ -23,6 +24,9 @@ export default function WaybillForm({
   offices: OfficeField[];
   employees: EmployeeField[];
 }) {
+
+  const cargoList = useCargo()
+
   return (
     <form>
       <div className="w-full">
