@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Label } from "@/app/ui/forms/label";
 
 type OptionField = {
-  id: number;
+  id: number | string;
   name: string;
 };
 
