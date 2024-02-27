@@ -24,8 +24,7 @@ export default function WaybillForm({
   offices: OfficeField[];
   employees: EmployeeField[];
 }) {
-
-  const cargoList = useCargo()
+  const { cargoList } = useCargo();
 
   return (
     <form>
@@ -71,26 +70,85 @@ export default function WaybillForm({
         </div>
 
         {/* Cargo List */}
-        <div className="flex w-full h-64 bg-gray-50 mb-3">
-          {/* {cargoList.map((cargo, index) => (
-            <div key={index}>
-                <table>
-                  <thead>
-                    <tr>
-                      <th></th>
-                    </tr>
-                  </thead>
-                </table>
+        {cargoList.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white">
+              <thead className="border-b">
+                <tr>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium text-gray-900 px-6 py-3 text-left border-black"
+                  >
+                    Quantity
+                  </th>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium text-gray-900 px-6 py-3 text-left border-black"
+                  >
+                    Unit
+                  </th>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium text-gray-900 px-6 py-3 text-left border-black"
+                  >
+                    Description
+                  </th>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium text-gray-900 px-6 py-3 text-left border-black"
+                  >
+                    Length
+                  </th>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium text-gray-900 px-6 py-3 text-left border-black"
+                  >
+                    Declared Value
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {cargoList.map((cargo, index) => (
+                  <tr className="border-b" key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-black">
+                      {cargo.quantity}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-black">
+                      {cargo.unit}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-black">
+                      {cargo.description}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-black">
+                      {cargo.length}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-black">
+                      {cargo.declaredValue}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="flex justify-end mt-4">
+              <Link
+                href="dashboard/waybills/add-cargos"
+                className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <span>Add More Cargo</span>
+              </Link>
             </div>
-          ))} */}
-          <Link
-            href="dashboard/waybills/add-cargos"
-            className="flex items-center m-auto rounded-md border p-2 hover:bg-gray-100 "
-          >
-            <PlusIcon className="w-5" />
-            <span>Add to Cargo</span>
-          </Link>
-        </div>
+          </div>
+        ) : (
+          <div className="flex w-full h-64 bg-gray-50 mb-3">
+            <Link
+              href="dashboard/waybills/add-cargos"
+              className="flex items-center m-auto rounded-md border p-2 hover:bg-gray-100 "
+            >
+              <PlusIcon className="w-5" />
+              <span>Add to Cargo</span>
+            </Link>
+          </div>
+        )}
 
         {/* Bottom Section */}
         <div className="flex flex-wrap -mx-3 mb-3">

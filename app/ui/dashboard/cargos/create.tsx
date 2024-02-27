@@ -32,12 +32,11 @@ export default function CreateCargos() {
   });
 
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = event.target;
     setCargoItem({ ...cargoItem, [name]: value });
   };
-
 
   const handleSubmit = () => {
     // Convert string values to numbers where necessary and submit the cargo
@@ -104,7 +103,7 @@ export default function CreateCargos() {
                 type="text"
                 placeholder="Unit"
                 className="border p-2"
-                value={cargoItem.quantity}
+                value={cargoItem.unit}
                 onChange={handleChange}
               />
             </div>
@@ -219,7 +218,10 @@ export default function CreateCargos() {
             >
               Cancel
             </button>
-            <button onClick={handleSubmit} className="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400">
+            <button
+              onClick={handleSubmit}
+              className="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400"
+            >
               Add Cargo
             </button>
           </div>
