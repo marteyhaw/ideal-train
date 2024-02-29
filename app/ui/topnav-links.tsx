@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 
 const links = [
-  { name: "Home", href: "/dashboard/waybills", icon: HomeIcon },
   {
     name: "Inbox",
     href: "/dashboard/inbox",
