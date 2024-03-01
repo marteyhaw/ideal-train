@@ -6,7 +6,7 @@ import { Input } from "@/app/ui/forms/input";
 import { TextArea } from "@/app/ui/forms/textarea";
 import { countryList } from "@/app/fe-lib/countries";
 
-const defaultCountry = "Philippines";
+const defaultCountry = "PH";
 
 export default function CustomerForm() {
   return (
