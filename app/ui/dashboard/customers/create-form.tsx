@@ -18,18 +18,26 @@ export default function CustomerForm() {
           <div className="w-full md:w-2/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
               <Label htmlFor="customer-name">Customer Name</Label>
-              <Input id="customer-name" type="text" />
+              <Input
+                id="customer-name"
+                type="text"
+                placeholder="Customer Name"
+              />
             </div>
             <div className="block mb-3">
               <Label htmlFor="street-address">Street Address</Label>
-              <Input id="street-address" type="text" />
+              <Input
+                id="street-address"
+                type="text"
+                placeholder="Street Address"
+              />
             </div>
             <div className="block mb-3">
               <div className="flex space-x-3">
                 <div className="flex w-1/2">
                   <div className="block mb-3">
                     <Label htmlFor="city">City</Label>
-                    <Input id="city" type="text" />
+                    <Input id="city" type="text" placeholder="City" />
                   </div>
                 </div>
                 <div className="flex w-1/2">
@@ -50,19 +58,20 @@ export default function CustomerForm() {
           <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
               <Label htmlFor="nickname">Nickname</Label>
-              <Input id="nickname" type="text" />
+              <Input id="nickname" type="text" placeholder="(Optional)" />
             </div>
             <div className="block mb-3">
               <Label htmlFor="contact-no">Contact No.</Label>
               <Input
                 id="contact-no"
                 type="tel"
-                pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                pattern="[0-9]{3}-[0-9]{4}"
+                placeholder="012-3456"
               />
             </div>
             <div className="block mb-3">
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" />
+              <Input id="email" type="email" placeholder="example@email.com" />
             </div>
           </div>
         </div>
@@ -76,21 +85,29 @@ export default function CustomerForm() {
             <div className="block mb-3">
               <Label className="-ml-2">Default Rate Charges</Label>
               <Label htmlFor="volume-charge">By Volume</Label>
-              <Input id="volume-charge" type="text" />
+              <Input
+                id="volume-charge"
+                type="text"
+                placeholder="Volume Charge"
+              />
             </div>
             <div className="block mb-3">
               <Label htmlFor="weight-charge">By Weight</Label>
-              <Input id="weight-charge" type="text" />
+              <Input
+                id="weight-charge"
+                type="text"
+                placeholder="Weight Charge"
+              />
             </div>
             <div className="block mb-3">
               <Label htmlFor="value-charge">By Value</Label>
-              <Input id="value-charge" type="text" />
+              <Input id="value-charge" type="text" placeholder="Value Charge" />
             </div>
           </div>
           <div className="w-full md:w-2/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
               <Label htmlFor="notes">Notes</Label>
-              <TextArea id="notes" name="notes" rows={10} />
+              <TextArea id="notes" name="notes" rows={10} placeholder="Notes" />
             </div>
           </div>
         </div>
