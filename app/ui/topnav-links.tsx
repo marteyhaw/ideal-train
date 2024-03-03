@@ -23,7 +23,7 @@ export default function TopNavLinks() {
         const LinkIcon = link.icon;
         return (
           <div key={link.name} className="lg:inline-block">
-            <Link href={link.href} className="text-teal-200 hover:text-white">
+            <Link href={link.href} className="text-white hover:text-gray-300">
               <div
                 className={clsx("mt-4 lg:mt-0 px-1 pb-1 flex items-end", {
                   "box-border border-b-4": pathname === link.href,

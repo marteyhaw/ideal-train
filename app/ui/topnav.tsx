@@ -5,6 +5,8 @@ import { PowerIcon } from "@heroicons/react/24/outline";
 import SeasonsLogo from "@/app/ui/seasons-logo";
 import { useState } from "react";
 import clsx from "clsx";
+import Link from "next/link";
+import Image from "next/image";
 
 function TopNavLinksWithSignOut() {
   return (
@@ -14,7 +16,7 @@ function TopNavLinksWithSignOut() {
       </div>
       <div>
         <form>
-          <button className="flex items-center justify-center gap-2 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">
+          <button className="flex items-center justify-center gap-2 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-gray-500 hover:bg-white mt-4 lg:mt-0">
             <PowerIcon className="w-6" />
             <div>Sign Out</div>
           </button>
@@ -33,18 +35,20 @@ export default function TopNav() {
 
   return (
     <>
-      <div className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
-        <div className="flex items-center flex-shrink-0 text-white mr-6">
+      <div className="flex items-center justify-between flex-wrap bg-blue-500 px-6 py-3">
+        <Link
+          href="/dashboard"
+          className="flex items-center flex-shrink-0 text-white space-x-2"
+        >
           <SeasonsLogo />
-          <span className="font-semibold text-xl tracking-tight"></span>
-        </div>
+        </Link>
         <div className="block lg:hidden">
           <button
-            className="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white"
+            className="flex items-center px-3 py-2 border rounded text-white border-teal-400 hover:text-gray-500 hover:border-white"
             onClick={handleClick}
           >
             <svg
-              className="fill-current h-3 w-3"
+              className="fill-current h-3 w-3 text-white"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -59,7 +63,7 @@ export default function TopNav() {
       </div>
       <div
         className={clsx(
-          "absolute bg-teal-500 z-10 px-6 pb-6 w-full block flex-grow-0 lg:hidden lg:items-center lg:w-auto",
+          "absolute bg-blue-500 z-10 px-6 pb-6 w-full block flex-grow-0 lg:hidden lg:items-center lg:w-auto",
           {
             hidden: active === false,
           },
