@@ -1,0 +1,59 @@
+volumes:
+  pg_logistics_data:
+    external: true
+  pg-admin_data:
+    external: true
+services:
+  ghi:
+    container_name: ghi
+    build:
+      context: ./ghi
+      dockerfile: dev.Dockerfile
+    environment:
+      WATCHPACK_POLLING: true
+      HOST: "0.0.0.0"
+      PORT_CONFIG: 3000
+      PUBLIC_URL: http://localhost:3000
+      LOGISTICS_API: http://localhost:8000
+    volumes:
+      - ./ghi/app:/app/app
+      - ./ghi/public:/app/public
+    restart: always
+    ports:
+      - 3000:3000
+  postgres:
+    build:
+      context: ./db
+      dockerfile: ./dev.Dockerfile
+    volumes:
+      - pg_logistics_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=logistics_data
+      - POSTGRES_PASSWORD=test-databases
+    ports:
+      - 15432:5432
+  pg-admin:
+    image: dpage/pgadmin4
+    volumes:
+      - pg-admin_data:/var/lib/pgadmin
+    ports:
+      - 8082:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pg.admin
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+      PGADMIN_DISABLE_POSTFIX: 1
+  api:
+    build:
+      context: ./api
+      dockerfile: dev.Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./api:/app
+    environment:
+      PROJECT_NAME: ${PROJECT_NAME}
+      SIGNING_KEY: ${SIGNING_KEY}
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS}
+      DATABASE_URI: postgresql://logistics_data:password@postgres/logistics_data
+      WAIT_HOSTS: postgres:5432
+      PORT: 8000
