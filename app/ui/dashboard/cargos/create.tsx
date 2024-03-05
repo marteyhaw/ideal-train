@@ -42,15 +42,17 @@ export default function CreateCargos() {
     // Convert string values to numbers where necessary and submit the cargo
     const submittedCargo = {
       ...cargoItem,
-      quantity: Number(cargoItem.quantity),
-      length: Number(cargoItem.length),
-      width: Number(cargoItem.width),
-      height: Number(cargoItem.height),
-      weight: Number(cargoItem.weight),
-      declaredValue: Number(cargoItem.declaredValue),
+      quantity: cargoItem.quantity ? Number(cargoItem.quantity) : 0,
+      length: cargoItem.length ? Number(cargoItem.length) : 0,
+      width: cargoItem.width ? Number(cargoItem.width) : 0,
+      height: cargoItem.height ? Number(cargoItem.height) : 0,
+      weight: cargoItem.weight ? Number(cargoItem.weight) : 0,
+      declaredValue: cargoItem.declaredValue
+        ? Number(cargoItem.declaredValue)
+        : 0,
     };
 
-    handleCargoSubmit([submittedCargo]); // Submit the cargo item
+    handleCargoSubmit(submittedCargo); // Submit the cargo item
     router.back(); // Close the modal and go back
   };
 

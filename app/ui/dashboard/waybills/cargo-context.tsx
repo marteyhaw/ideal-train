@@ -4,6 +4,7 @@ import React, {
   createContext,
   useContext,
   useState,
+  useEffect,
   ReactNode,
   Dispatch,
   SetStateAction,
@@ -23,7 +24,7 @@ interface CargoItem {
 interface CargoContextValue {
   cargoList: CargoItem[];
   setCargoList: Dispatch<SetStateAction<CargoItem[]>>;
-  handleCargoSubmit: (newCargo: CargoItem[]) => void;
+  handleCargoSubmit: (newCargo: CargoItem) => void; // Adjusted to accept a single CargoItem
 }
 
 const CargoContext = createContext<CargoContextValue | null>(null);
@@ -40,10 +41,19 @@ interface CargoProviderProps {
 }
 
 export const CargoProvider: React.FC<CargoProviderProps> = ({ children }) => {
-  const [cargoList, setCargoList] = useState<CargoItem[]>([]);
+  const [cargoList, setCargoList] = useState<CargoItem[]>(() => {
+    // Load cargo list from localStorage or default to an empty array
+    const localData = localStorage.getItem("cargoList");
+    return localData ? JSON.parse(localData) : [];
+  });
 
-  const handleCargoSubmit = (newCargo: CargoItem[]) => {
-    setCargoList((currentCargoList) => [...currentCargoList, ...newCargo]);
+  useEffect(() => {
+    // Update localStorage whenever the cargo list changes
+    localStorage.setItem("cargoList", JSON.stringify(cargoList));
+  }, [cargoList]);
+
+  const handleCargoSubmit = (newCargo: CargoItem) => {
+    setCargoList((currentCargoList) => [...currentCargoList, newCargo]);
   };
 
   return (
