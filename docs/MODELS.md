@@ -36,14 +36,14 @@ class Cargo{
   additional_charge
 }
 class Carrier{
-  carrier_id - Integer[12], ID, AUTO, Unique
-  carrier_name - String[50], Unique
-  carrier_nickname - String[20], nullable
-  carrier_address - String[100], nullable
-  carrier_email - String[50]
-  carrier_contact_no - String[20]
-  carrier_contact_person - String[50]
-  notes - String[500]
+  carrier_id
+  carrier_name
+  carrier_nickname
+  carrier_address
+  carrier_email
+  carrier_contact_no
+  carrier_contact_person
+  notes
 }
 class Containerization{
   container_id
