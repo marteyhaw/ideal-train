@@ -140,125 +140,112 @@ Customer <-- Waybill : consignee
 
 ### Cargo
 
-- cargo_id- Integer[12], ID, AUTO, Unique
-- waybill_no- Integer[12], Unique FK[Waybill]
-- quantity- Integer[12]
-- unit- String[20]
-- description- String[100]
-- declared_value- Decimal[11.2]
-- length- Decimal[12.6], nullable
-- width- Decimal[12.6], nullable
-- height- Decimal[12.6], nullable
-- weight- Decimal[10.4], nullable
-- total_volume- Decimal[12.6], nullable
-- charge_type- String[20], nullable May be unnecessary, basically a flag to
-  determine to charge by volume, weight, or both, which can be programmatically
-  determined
-- volume_charge- Decimal[11.2], nullable
-- weight_charge- Decimal[11.2], nullable
-- additional_charge- Decimal[11.2], nullable Might need to revisit other
-  possible charges and create field for each, for now can only foresee delivery
-  charge
+- cargo_id- ID, Auto Generated
+- waybill_id- ID, Foreign Key[Waybill], Required
+- quantity- Integer[12], Required
+- unit- String[20], Required
+- description- String[100], Required
+- declared_value- Decimal[11.2], Required
+- length- Decimal[12.6], Optional
+- width- Decimal[12.6], Optional
+- height- Decimal[12.6], Optional
+- weight- Decimal[10.4], Optional
+- total_volume- Decimal[12.6], Optional
+- charge_type- String[20], Optional
+- volume_charge- Decimal[11.2], Optional
+- weight_charge- Decimal[11.2], Optional
+- additional_charge- Decimal[11.2], Optional
 
 ### Carrier
 
-- carrier_id - Integer[12], ID, AUTO, Unique
-- carrier_name - String[50], Unique
-- carrier_nickname - String[20], nullable
-- carrier_address - String[100], nullable
-- carrier_email - String[50]
-- carrier_contact_no - String[20]
-- carrier_contact_person - String[50]
-- notes - String[500]
+- carrier_id - ID, Auto Generated
+- carrier_name - String[50], Required, Unique
+- carrier_nickname - String[20], Optional
+- carrier_address - String[100], Optional
+- carrier_email - String[50], Unique, Optional
+- carrier_contact_no - String[20], Optional
+- carrier_contact_person - String[50], Optional
+- notes - String[500], Optional
 
 ### Containerization
 
-- container_id - Integer[12], ID, AUTO, Unique
+- container_id - ID, Auto Generated
 - container_code - String[20]
 - carrier_id - Integer[12], FK[Carrier]
 
 ### Customer
 
-- customer_id - Integer[12], ID, AUTO, Unique
+- customer_id - ID, Auto Generated
 - customer_name - String[50], Unique
-- customer_nickname - String[20], nullable
-- customer_address - String[100], nullable
-- customer_city - String[50], nullable
-- customer_country - String[50], nullable
-- customer_email - String[50], nullable
-- customer_contact_no - String[50], nullable
-- rate_volume_charge - Decimal[11.2]
-- rate_weight_charge - Decimal[11.2]
-- rate_value_charge - Decimal[11.2]
-- notes - String[500], nullable
+- customer_nickname - String[20], Unique, Optional
+- customer_address - String[100], Optional
+- customer_city - String[50], Optional
+- customer_country - String[50], Optional
+- customer_email - String[50], Unique, Optional
+- customer_contact_no - String[50], Optional
+- rate_volume_charge - Decimal[11.2], Optional
+- rate_weight_charge - Decimal[11.2], Optional
+- rate_value_charge - Decimal[11.2], Optional
+- notes - String[500], Optional
 
 ### Employee
 
-- employee_id - Integer[12], ID, AUTO, Unique - can be used as foreign key for
-  Users to tie Employee record to User
-- last_name - String[30]
-- first_name - String[50]
-- middle_name - String[30], nullable
-- email - String[80]
-- local_office - String[20]
+- employee_id - ID, Auto Generated
+- last_name - String[30], Required
+- first_name - String[50], Required
+- middle_name - String[30], Optional
+- email - String[80], Required
+- local_office - String[20], Required
 
 ### Manifest
 
-- manifest_id - Integer[12], ID, AUTO, Unique
-- destination - String[20] - or possibly a foreign key if creating a reference
-  table for branches e.g. 'CEB' for Cebu
-- container_id - Integer[12], FK[Containerization]
-- total_volume - Decimal[12.6], nullable
-- total_weight - Decimal[12,6], nullable
-- checked_by - String[20] - or possibly foreign key pointing to Employee using
-  employee_id
-- manifest_date - DateTime
-- encoded_by - String[20] - or possibly foreign key pointing to Employee using
-  employee_id
-- encoded_on - DateTime
+- manifest_id - ID, Auto Generated
+- destination - String[20]
+- container_id - ID, Foreign Key[Containerization]
+- total_volume - Decimal[12.6], Optional
+- total_weight - Decimal[12,6], Optional
+- checked_by - ID, Foriegn Key[Employee], Required
+- manifest_date - DateTime, Required
+- encoded_by - ID, Foriegn Key[Employee], Required
+- encoded_on - DateTime, Required
 
 ### Manifest Status Log
 
-- manifest_status_id - Integer[16], ID, AUTO, Unique
-- manifest_id - Integer[12], FK[Manifest]
-- status_datetime - DateTime
-- status_current - String[20]
-- location - String[50]
-- logged_by - Integer[12], FK[Employee]
-- logged_on - DateTime
+- manifest_status_id - ID, Auto Generated
+- manifest_id - ID, Foreign Key[Manifest], Required
+- status_datetime - DateTime, Required
+- status_current - String[20], Required
+- location - String[50], Required
+- logged_by - ID, Foreign Key[Employee], Required
+- logged_on - DateTime, Required
 
 ### Waybill
 
-- waybill_id - Integer[12], ID, AUTO, Unique
-- waybill_no - Integer[12], Unique
-- shipper - Integer[12], FK[Customer]
-- consigneee - Integer[12], FK[Customer]
-- destination - String[20]
-- waybill_date - DateTime, nullable
-- total_amount - Decimal[11.2]
-- total_weight_charge - Decimal[11.2], nullable
-- total_value_charge - Decimal[11.2], nullable
-- total_cu_msmt_charge - Decimal[11.2], nullable
-- total_delivery_charge - Decimal[11.2], nullable
-- total_vat - Decimal[11.2], nullable
-- payment_terms - String[20] - or possibly a foreign key if creating a reference
-  table for Payment Terms e.g. 'ACCT' for Account or 'PPD' for Prepaid
-- notes - String[500], nullable
-- manifest_id - Integer[12], FK[Manifest]
-- received_by - String[20] - or possibly foreign key pointing to Employee using
-  employee_id
-- received_at - String[20] - or possibly a foreign key if creating a reference
-  table for branches e.g. 'CEB' for Cebu
-- encoded_by - String[20] - or possibly foreign key pointing to Employee using
-  employee_id
-- encoded_on - DateTime
+- waybill_id - ID, Auto Generated
+- waybill_no - Integer[12], Unique, Required
+- shipper - Integer[12], Foreign Key[Customer], Required
+- consigneee - Integer[12], Foreign Key[Customer], Required
+- destination - String[20], Required
+- waybill_date - DateTime, Required
+- total_amount - Decimal[11.2], Required
+- total_weight_charge - Decimal[11.2], Optional
+- total_value_charge - Decimal[11.2], Optional
+- total_cu_msmt_charge - Decimal[11.2], Optional
+- total_delivery_charge - Decimal[11.2], Optional
+- total_vat - Decimal[11.2], Optional
+- payment_terms - String[20], Optional
+- manifest_id - Integer[12], Foreign Key[Manifest], Optional
+- received_by - ID, Foreign Key[Employee], Required
+- received_at - String[20], Required
+- encoded_by - ID, Foreign Key[Employee], Required
+- encoded_on - DateTime, Required
 
 ### Waybill Status Log
 
-- waybill_status_id - Integer[16], ID, AUTO, Unique
-- waybill_id - Integer[12], FK[Waybill]
-- status_datetime - DateTime
-- status_current - String[20]
-- location - String[50]
-- logged_by - Integer[12], FK[Employee]
-- logged_on - DateTime
+- waybill_status_id - ID, Auto Generated
+- waybill_id - ID, Foreign Key[Waybill], Required
+- status_datetime - DateTime, Required
+- status_current - String[20], Required
+- location - String[50], Required
+- logged_by - ID, Foreign Key[Employee], Required
+- logged_on - DateTime, Required
