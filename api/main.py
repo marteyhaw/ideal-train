@@ -1,8 +1,15 @@
 from functools import lru_cache
 
+import models
+from core.database import engine
 from core.settings import Settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from api.main import api_router
+
+models.Base.metadata.drop_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 
 @lru_cache
@@ -11,18 +18,19 @@ def get_settings():
 
 
 description = """
-Seasons Logistics API helps you do manage cargo logistics. 🚀
+Seasons Logistics API helps you manage cargo logistics. 🚀
 
-## Items
+## Waybills
 
-You can **read items**.
+You can **read waybills**.
 
-## Users
+## Customers
 
 You will be able to:
 
-* **Create users** (_not implemented_).
-* **Read users** (_not implemented_).
+* **Create customers**
+* **Read customers**
+
 """
 
 settings = get_settings()
@@ -52,6 +60,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(api_router, prefix="/api/v1")
 
 
 @app.get("/")
