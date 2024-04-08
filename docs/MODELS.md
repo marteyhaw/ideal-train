@@ -170,8 +170,9 @@ Customer <-- Waybill : consignee
 ### Containerization
 
 - container_id - ID, Auto Generated
-- container_code - String[20]
-- carrier_id - Integer[12], FK[Carrier]
+- container_code - String[20], Required
+- carrier_id - Integer[12], FK[Carrier], Required
+- container_date - DateTime, Required
 
 ### Customer
 
@@ -200,6 +201,7 @@ Customer <-- Waybill : consignee
 ### Manifest
 
 - manifest_id - ID, Auto Generated
+- manifest_no - Integer[12], Unique, Required
 - destination - String[20]
 - container_id - ID, Foreign Key[Containerization]
 - total_volume - Decimal[12.6], Optional
@@ -226,6 +228,7 @@ Customer <-- Waybill : consignee
 - shipper - Integer[12], Foreign Key[Customer], Required
 - consigneee - Integer[12], Foreign Key[Customer], Required
 - destination - String[20], Required
+- destination_address - String[100], Optional
 - waybill_date - DateTime, Required
 - total_amount - Decimal[11.2], Required
 - total_weight_charge - Decimal[11.2], Optional
