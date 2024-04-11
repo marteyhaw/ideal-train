@@ -8,7 +8,7 @@ export default function ViewWaybill({ waybill }: { waybill: Waybill }) {
       <div className="w-full">
         <div className="w-1/3 mb-3">
           <Label htmlFor="waybill-no">Waybill No.</Label>
-          <p>{waybill.waybillNumber}</p>
+          <p>{waybill.waybillNo}</p>
         </div>
         {/* Top Section */}
         <div className="flex flex-wrap -mx-3 mb-3">
@@ -16,12 +16,12 @@ export default function ViewWaybill({ waybill }: { waybill: Waybill }) {
           <div className="w-full md:w-2/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
               <Label htmlFor="consignee-address">Consignee</Label>
-              <p>{waybill.cosignee}</p>
+              <p>{waybill.consignee}</p>
             </div>
 
             <div className="block mb-3">
               <Label htmlFor="consignee-address">Address</Label>
-              <p>{waybill.cosigneeAddress}</p>
+              <p>{waybill.consigneeAddress}</p>
             </div>
           </div>
 

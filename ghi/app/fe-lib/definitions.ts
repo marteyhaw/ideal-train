@@ -23,6 +23,16 @@ export type EmployeeField = {
   name: string;
 };
 
+export type DestinationField = {
+  id: number;
+  name: string;
+};
+
+export type CarrierField = {
+  id: number;
+  name: string;
+};
+
 export type SideNavItem = {
   title: string;
   path: string;

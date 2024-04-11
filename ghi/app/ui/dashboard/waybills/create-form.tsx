@@ -12,6 +12,7 @@ import { Input } from "@/app/ui/forms/input";
 import { TextArea } from "@/app/ui/forms/textarea";
 import Link from "next/link";
 import { useCargo } from "./cargo-context";
+import { useState } from "react";
 
 export default function WaybillForm({
   modal,
@@ -25,6 +26,41 @@ export default function WaybillForm({
   employees: EmployeeField[];
 }) {
   const { cargoList } = useCargo();
+  const [waybill, setWaybill] = useState<Waybill>({
+    waybillNo: "",
+    consignee: "",
+    consigneeAddress: "",
+    destination: "",
+    date: "",
+    cargos: [],
+    shipper: "",
+    shipperAddress: "",
+    receivedAt: "",
+    receivedBy: "",
+    volumeCharge: 0,
+    valueCharge: 0,
+    miscCharge: 0,
+    weightCharge: 0,
+    deliveryCharge: 0,
+    valueAddedTax: 0,
+  });
+
+  const handleChange = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = event.target;
+    setWaybill({ ...waybill, [name]: value });
+  };
+
+  const totalCharges =
+    Number(waybill.volumeCharge) +
+    Number(waybill.valueCharge) +
+    Number(waybill.miscCharge) +
+    Number(waybill.weightCharge) +
+    Number(waybill.deliveryCharge) +
+    Number(waybill.valueAddedTax);
 
   return (
     <form>
@@ -43,6 +79,8 @@ export default function WaybillForm({
                 id="consignee"
                 name="consignee"
                 selectOptions={customers}
+                value={waybill.consignee}
+                onChange={handleChange}
               />
             </div>
 
@@ -50,8 +88,10 @@ export default function WaybillForm({
               <Label htmlFor="consignee-address">Address</Label>
               <TextArea
                 id="consignee-address"
-                name="consignee-address"
+                name="consigneeAddress"
                 rows={4}
+                value={waybill.consigneeAddress}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -64,16 +104,25 @@ export default function WaybillForm({
                 id="destination"
                 name="destination"
                 selectOptions={offices}
+                value={waybill.destination}
+                onChange={handleChange}
               />
             </div>
             <div className="block mb-3">
               <Label htmlFor="date">Date</Label>
-              <Input id="date" type="date" />
+              <Input
+                id="date"
+                name="date"
+                type="date"
+                value={waybill.date}
+                onChange={handleChange}
+              />
             </div>
           </div>
         </div>
 
         {/* Cargo List */}
+        {/* Need to add the onChange and values to the cargoList */}
         {cargoList.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
@@ -173,12 +222,20 @@ export default function WaybillForm({
                 id="shipper"
                 name="shipper"
                 selectOptions={customers}
+                value={waybill.shipper}
+                onChange={handleChange}
               />
             </div>
 
             <div className="block mb-3">
               <Label htmlFor="shipper-address">Address</Label>
-              <TextArea id="shipper-address" name="shipper-address" rows={4} />
+              <TextArea
+                id="shipper-address"
+                name="shipperAddress"
+                rows={4}
+                value={waybill.shipperAddress}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
@@ -188,58 +245,102 @@ export default function WaybillForm({
               <Select
                 label="Received At"
                 id="received-at"
-                name="received-at"
+                name="receivedAt"
                 selectOptions={offices}
+                value={waybill.receivedAt}
+                onChange={handleChange}
               />
             </div>
             <div className="block mb-3">
               <Select
                 label="Received By"
                 id="received-by"
-                name="received-by"
+                name="receivedBy"
                 selectOptions={employees}
+                value={waybill.receivedBy}
+                onChange={handleChange}
               />
             </div>
           </div>
         </div>
       </div>
       {/* Total Freight Charges */}
-      {/* <div className="flex flex-wrap -mx-3 mb-3">
-        <label htmlFor="total-freight-charge">Total Freight Charges</label>
-        <p>$0.00</p>
+      <div className="flex justify-between w-full py-4 pr-8">
+        <Label htmlFor="total-freight-charge">Total Freight Charges</Label>
+        {totalCharges === 0 ? (
+          <p className="text-right">$0.00</p>
+        ) : (
+          <p className="text-right">${totalCharges}</p>
+        )}
       </div>
       <div className="flex flex-wrap -mx-3 mb-3">
         <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0">
           <div className="block mb-3">
-            <label htmlFor="volume-charge">Volume Charge</label>
-            <Input id="number" type="number" />
+            <Label htmlFor="volume-charge">Volume Charge</Label>
+            <Input
+              id="volume-charge"
+              name="volumeCharge"
+              type="number"
+              value={waybill.volumeCharge}
+              onChange={handleChange}
+            />
           </div>
           <div className="block mb-3">
-            <label htmlFor="weight-charge">Weight Charge</label>
-            <Input id="number" type="number" />
+            <Label htmlFor="weight-charge">Weight Charge</Label>
+            <Input
+              id="weight-charge"
+              name="weightCharge"
+              type="number"
+              value={waybill.weightCharge}
+              onChange={handleChange}
+            />
           </div>
         </div>
         <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0">
           <div className="block mb-3">
-            <label htmlFor="value-charge">Value Charge</label>
-            <Input id="number" type="number" />
+            <Label htmlFor="value-charge">Value Charge</Label>
+            <Input
+              id="value-charge"
+              name="valueCharge"
+              type="number"
+              value={waybill.valueCharge}
+              onChange={handleChange}
+            />
           </div>
           <div className="block mb-3">
-            <label htmlFor="delivery-charge">Delivery Charge</label>
-            <Input id="number" type="number" />
+            <Label htmlFor="delivery-charge">Delivery Charge</Label>
+            <Input
+              id="delivery-charge"
+              name="deliveryCharge"
+              type="number"
+              value={waybill.deliveryCharge}
+              onChange={handleChange}
+            />
           </div>
         </div>
         <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0">
           <div className="block mb-3">
-            <label htmlFor="misc-charge">Misc Charge</label>
-            <Input id="number" type="number" />
+            <Label htmlFor="misc-charge">Misc Charge</Label>
+            <Input
+              id="misc-charge"
+              name="miscCharge"
+              type="number"
+              value={waybill.miscCharge}
+              onChange={handleChange}
+            />
           </div>
           <div className="block mb-3">
-            <label htmlFor="value-added-tax">Value-Added Tax</label>
-            <Input id="number" type="number" />
+            <Label htmlFor="value-added-tax">Value-Added Tax</Label>
+            <Input
+              id="value-added-tax"
+              name="valueAddedTax"
+              type="number"
+              value={waybill.valueAddedTax}
+              onChange={handleChange}
+            />
           </div>
         </div>
-      </div> */}
+      </div>
       <button className="float-right rounded-md border px-3 py-2 text-white transition-colors bg-green-500 hover:bg-green-600 ">
         <span>Create Waybill</span>
       </button>

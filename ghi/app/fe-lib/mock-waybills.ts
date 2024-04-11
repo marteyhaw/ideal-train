@@ -10,9 +10,9 @@ interface WaybillCargo {
 }
 
 interface Waybill {
-  waybillNumber: string;
-  cosignee: string;
-  cosigneeAddress: string;
+  waybillNo: string;
+  consignee: string;
+  consigneeAddress: string;
   destination: string;
   date: string;
   cargos: WaybillCargo[];
@@ -20,4 +20,10 @@ interface Waybill {
   shipperAddress: string;
   receivedAt: string;
   receivedBy: string;
+  volumeCharge: number;
+  valueCharge: number;
+  miscCharge: number;
+  weightCharge: number;
+  deliveryCharge: number;
+  valueAddedTax: number;
 }
