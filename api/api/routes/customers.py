@@ -44,3 +44,20 @@ def create_customer(
             status_code=400, detail="Customer already registered"
         )
     return crud.create_customer(db=db, customer=customer)
+
+
+@router.patch("/{customer_id}", response_model=schemas.Customer)
+def update_customer(
+    customer_id: UUID,
+    customer_update: schemas.CustomerUpdate,
+    db: Session = Depends(get_db),
+):
+    update_data = customer_update.model_dump(exclude_unset=True)
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Bad request")
+
+    updated_customer = crud.update_customer(db, customer_id, update_data)
+    if updated_customer is None:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    return updated_customer

@@ -30,6 +30,24 @@ def create_customer(db: Session, customer: schemas.CustomerCreate) -> Customer:
     return db_customer
 
 
+def update_customer(
+    db: Session,
+    uuid: UUID,
+    customer_update_data: schemas.CustomerUpdate,
+) -> Customer:
+    db_customer = db.query(Customer).filter(Customer.id == uuid)
+    db_customer.first()
+    if db_customer is None:
+        return None
+    db_customer.update(
+        customer_update_data,
+        synchronize_session=False,
+    )
+    db.commit()
+    updated_customer = db_customer.first()
+    return updated_customer
+
+
 def get_waybill_by_id(db: Session, uuid: UUID) -> Waybill | None:
     return db.query(Waybill).filter(Waybill.id == uuid).first()
 

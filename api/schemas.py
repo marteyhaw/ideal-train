@@ -7,19 +7,34 @@ from pydantic import BaseModel
 class CustomerBase(BaseModel):
     name: str
     nickname: str
-    address: str
-    city: str
-    country: str
-    email: str
-    contact_no: str
-    rate_volume_charge: float
-    rate_weigh_charge: float
-    rate_value_charge: float
-    notes: str
+    address: str | None = None
+    city: str | None = None
+    country: str | None = None
+    email: str | None = None
+    contact_no: str | None = None
+    rate_volume_charge: float | None = None
+    rate_weigh_charge: float | None = None
+    rate_value_charge: float | None = None
+    notes: str | None = None
 
 
 class CustomerCreate(CustomerBase):
     pass
+
+
+class CustomerUpdate(CustomerBase):
+    name: str | None = None
+    nickname: str | None = None
+    address: str | None = None
+    city: str | None = None
+    country: str | None = None
+    email: str | None = None
+    contact_no: str | None = None
+    rate_volume_charge: float | None = None
+    rate_weigh_charge: float | None = None
+    rate_value_charge: float | None = None
+    notes: str | None = None
+    is_active: bool = True
 
 
 class Customer(CustomerBase):
