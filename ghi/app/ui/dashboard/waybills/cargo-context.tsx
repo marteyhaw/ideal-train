@@ -43,13 +43,19 @@ interface CargoProviderProps {
 export const CargoProvider: React.FC<CargoProviderProps> = ({ children }) => {
   const [cargoList, setCargoList] = useState<CargoItem[]>(() => {
     // Load cargo list from localStorage or default to an empty array
-    const localData = localStorage.getItem("cargoList");
-    return localData ? JSON.parse(localData) : [];
+    // Checking if localstorage is available by checking if the code is running in browser env
+    if (typeof window !== "undefined") {
+      const localData = localStorage.getItem("cargoList");
+      return localData ? JSON.parse(localData) : [];
+    }
+    return [];
   });
 
   useEffect(() => {
     // Update localStorage whenever the cargo list changes
-    localStorage.setItem("cargoList", JSON.stringify(cargoList));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cargoList", JSON.stringify(cargoList));
+    }
   }, [cargoList]);
 
   const handleCargoSubmit = (newCargo: CargoItem) => {
