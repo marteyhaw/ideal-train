@@ -36,36 +36,36 @@ class Cargo{
   additional_charge
 }
 class Carrier{
-  carrier_id
-  carrier_name
-  carrier_nickname
-  carrier_address
-  carrier_email
-  carrier_contact_no
-  carrier_contact_person
+  id
+  name
+  nickname
+  address
+  email
+  contact_no
+  contact_person
   notes
 }
 class Containerization{
-  container_id
-  container_code
+  id
+  code
   carrier_id
 }
 class Customer{
-  customer_id
-  customer_name
-  customer_nickname
-  customer_address
-  customer_city
-  customer_country
-  customer_email
-  customer_contact_no
+  id
+  name
+  nickname
+  address
+  city
+  country
+  email
+  contact_no
   rate_volume_charge
   rate_weight_charge
   rate_value_charge
   notes
 }
 class Employee{
-  employee_id
+  id
   last_name
   first_name
   middle_name
@@ -73,18 +73,18 @@ class Employee{
   local_office
 }
 class Manifest{
-  manifest_id
+  id
   destination
   container_id
   total_volume
   total_weight
   checked_by
-  manifest_date
+  created_date
   encoded_by
   encoded_on
 }
 class ManifestStatusLog{
-  manifest_status_id
+  id
   manifest_id
   status_datetime
   status_current
@@ -93,12 +93,12 @@ class ManifestStatusLog{
   logged_on
 }
 class Waybill{
-  waybill_id
-  waybill_no
+  id
+  number
   shipper
   consigneee
   destination
-  waybill_date
+  created_date
   total_amount
   total_weight_charge
   total_value_charge
@@ -114,7 +114,7 @@ class Waybill{
   encoded_on
 }
 class WaybillStatusLog{
-  waybill_status_id
+  id
   waybill_id
   status_datetime
   status_current
@@ -140,7 +140,7 @@ Customer <-- Waybill : consignee
 
 ### Cargo
 
-- cargo_id- ID, Auto Generated
+- id- ID, Auto Generated
 - waybill_id- ID, Foreign Key[Waybill], Required
 - quantity- Integer[12], Required
 - unit- String[20], Required
@@ -158,32 +158,32 @@ Customer <-- Waybill : consignee
 
 ### Carrier
 
-- carrier_id - ID, Auto Generated
-- carrier_name - String[50], Required, Unique
-- carrier_nickname - String[20], Optional
-- carrier_address - String[100], Optional
-- carrier_email - String[50], Unique, Optional
-- carrier_contact_no - String[20], Optional
-- carrier_contact_person - String[50], Optional
+- id - ID, Auto Generated
+- name - String[50], Required, Unique
+- nickname - String[20], Optional
+- address - String[100], Optional
+- email - String[50], Unique, Optional
+- contact_no - String[20], Optional
+- contact_person - String[50], Optional
 - notes - String[500], Optional
 
 ### Containerization
 
-- container_id - ID, Auto Generated
-- container_code - String[20], Required
-- carrier_id - Integer[12], FK[Carrier], Required
-- container_date - DateTime, Required
+- id - ID, Auto Generated
+- code - String[20], Required
+- id - Integer[12], FK[Carrier], Required
+- created_date - DateTime, Required
 
 ### Customer
 
-- customer_id - ID, Auto Generated
-- customer_name - String[50], Unique
-- customer_nickname - String[20], Unique, Optional
-- customer_address - String[100], Optional
-- customer_city - String[50], Optional
-- customer_country - String[50], Optional
-- customer_email - String[50], Unique, Optional
-- customer_contact_no - String[50], Optional
+- id - ID, Auto Generated
+- name - String[50], Unique
+- nickname - String[20], Unique, Optional
+- address - String[100], Optional
+- city - String[50], Optional
+- country - String[50], Optional
+- email - String[50], Optional
+- contact_no - String[50], Optional
 - rate_volume_charge - Decimal[11.2], Optional
 - rate_weight_charge - Decimal[11.2], Optional
 - rate_value_charge - Decimal[11.2], Optional
@@ -191,7 +191,7 @@ Customer <-- Waybill : consignee
 
 ### Employee
 
-- employee_id - ID, Auto Generated
+- id - ID, Auto Generated
 - last_name - String[30], Required
 - first_name - String[50], Required
 - middle_name - String[30], Optional
@@ -200,20 +200,20 @@ Customer <-- Waybill : consignee
 
 ### Manifest
 
-- manifest_id - ID, Auto Generated
-- manifest_no - Integer[12], Unique, Required
+- id - ID, Auto Generated
+- number - Integer[12], Unique, Required
 - destination - String[20]
 - container_id - ID, Foreign Key[Containerization]
 - total_volume - Decimal[12.6], Optional
 - total_weight - Decimal[12,6], Optional
 - checked_by - ID, Foriegn Key[Employee], Required
-- manifest_date - DateTime, Required
+- created_date - DateTime, Required
 - encoded_by - ID, Foriegn Key[Employee], Required
 - encoded_on - DateTime, Required
 
 ### Manifest Status Log
 
-- manifest_status_id - ID, Auto Generated
+- id - ID, Auto Generated
 - manifest_id - ID, Foreign Key[Manifest], Required
 - status_datetime - DateTime, Required
 - status_current - String[20], Required
@@ -223,14 +223,14 @@ Customer <-- Waybill : consignee
 
 ### Waybill
 
-- waybill_id - ID, Auto Generated
-- waybill_no - Integer[12], Unique, Required
+- id - ID, Auto Generated
+- number - Integer[12], Unique, Required
 - shipper - Integer[12], Foreign Key[Customer], Required
 - consigneee - Integer[12], Foreign Key[Customer], Required
 - destination - String[20], Required
 - destination_address - String[100], Optional
-- waybill_date - DateTime, Required
-- total_amount - Decimal[11.2], Required
+- created_date - DateTime, Required
+- total_amount - Decimal[11.2], Optional
 - total_weight_charge - Decimal[11.2], Optional
 - total_value_charge - Decimal[11.2], Optional
 - total_cu_msmt_charge - Decimal[11.2], Optional
@@ -245,7 +245,7 @@ Customer <-- Waybill : consignee
 
 ### Waybill Status Log
 
-- waybill_status_id - ID, Auto Generated
+- id - ID, Auto Generated
 - waybill_id - ID, Foreign Key[Waybill], Required
 - status_datetime - DateTime, Required
 - status_current - String[20], Required
