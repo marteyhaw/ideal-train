@@ -5,31 +5,84 @@ import { Label } from "@/app/ui/forms/label";
 import { Input } from "@/app/ui/forms/input";
 import { TextArea } from "@/app/ui/forms/textarea";
 import { countryList } from "@/app/fe-lib/countries";
+import { useState } from "react";
 
 const defaultCountry = "PH";
 
 export default function CustomerForm() {
+  const [customer, setCustomer] = useState<Customer>({
+    name: "",
+    nickname: "",
+    address: "",
+    city: "",
+    country: defaultCountry,
+    email: "",
+    contact_no: "",
+    rate_volume_charge: 0,
+    rate_weigh_charge: 0,
+    rate_value_charge: 0,
+    notes: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setCustomer({ ...customer, [name]: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      console.log(JSON.stringify(customer));
+      const response = await fetch(`http://localhost:8000/api/v1/customers/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(customer),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request could not be completed`);
+      }
+
+      const result = await response.json();
+      console.log("SUCCESS:", result);
+    } catch (error) {
+      console.error("ERROR:", error);
+    }
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="flex flex-col w-full">
         {/* Top Section */}
         <div className="flex flex-wrap">
           {/* Customer Name, Street Address, City, & Country */}
           <div className="w-full md:w-2/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
-              <Label htmlFor="customer-name">Customer Name</Label>
+              <Label htmlFor="name">Customer Name</Label>
               <Input
-                id="customer-name"
+                id="name"
+                name="name"
                 type="text"
                 placeholder="Customer Name"
+                value={customer.name}
+                onChange={handleChange}
               />
             </div>
             <div className="block mb-3">
-              <Label htmlFor="street-address">Street Address</Label>
+              <Label htmlFor="address">Street Address</Label>
               <Input
-                id="street-address"
+                id="address"
+                name="address"
                 type="text"
                 placeholder="Street Address"
+                value={customer.address}
+                onChange={handleChange}
               />
             </div>
             <div className="block mb-3">
@@ -37,7 +90,14 @@ export default function CustomerForm() {
                 <div className="flex w-1/2">
                   <div className="block mb-3">
                     <Label htmlFor="city">City</Label>
-                    <Input id="city" type="text" placeholder="City" />
+                    <Input
+                      id="city"
+                      name="city"
+                      type="text"
+                      placeholder="City"
+                      value={customer.city}
+                      onChange={handleChange}
+                    />
                   </div>
                 </div>
                 <div className="flex w-1/2">
@@ -46,8 +106,9 @@ export default function CustomerForm() {
                       label="Country"
                       id="country"
                       name="country"
-                      defaultValue={defaultCountry}
                       selectOptions={countryList}
+                      value={customer.country}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -58,20 +119,37 @@ export default function CustomerForm() {
           <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
               <Label htmlFor="nickname">Nickname</Label>
-              <Input id="nickname" type="text" placeholder="(Optional)" />
+              <Input
+                id="nickname"
+                name="nickname"
+                type="text"
+                placeholder="(Optional)"
+                value={customer.nickname}
+                onChange={handleChange}
+              />
             </div>
             <div className="block mb-3">
               <Label htmlFor="contact-no">Contact No.</Label>
               <Input
                 id="contact-no"
+                name="contact_no"
                 type="tel"
                 pattern="[0-9]{3}-[0-9]{4}"
                 placeholder="012-3456"
+                value={customer.contact_no}
+                onChange={handleChange}
               />
             </div>
             <div className="block mb-3">
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" placeholder="example@email.com" />
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="example@email.com"
+                value={customer.email}
+                onChange={handleChange}
+              />
             </div>
           </div>
         </div>
@@ -87,27 +165,47 @@ export default function CustomerForm() {
               <Label htmlFor="volume-charge">By Volume</Label>
               <Input
                 id="volume-charge"
+                name="rate_volume_charge"
                 type="text"
                 placeholder="Volume Charge"
+                value={customer.rate_volume_charge}
+                onChange={handleChange}
               />
             </div>
             <div className="block mb-3">
               <Label htmlFor="weight-charge">By Weight</Label>
               <Input
                 id="weight-charge"
+                name="rate_weigh_charge"
                 type="text"
                 placeholder="Weight Charge"
+                value={customer.rate_weigh_charge}
+                onChange={handleChange}
               />
             </div>
             <div className="block mb-3">
               <Label htmlFor="value-charge">By Value</Label>
-              <Input id="value-charge" type="text" placeholder="Value Charge" />
+              <Input
+                id="value-charge"
+                name="rate_value_charge"
+                type="text"
+                placeholder="Value Charge"
+                value={customer.rate_value_charge}
+                onChange={handleChange}
+              />
             </div>
           </div>
           <div className="w-full md:w-2/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
               <Label htmlFor="notes">Notes</Label>
-              <TextArea id="notes" name="notes" rows={10} placeholder="Notes" />
+              <TextArea
+                id="notes"
+                name="notes"
+                rows={10}
+                placeholder="Notes"
+                value={customer.notes}
+                onChange={handleChange}
+              />
             </div>
           </div>
         </div>

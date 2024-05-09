@@ -27,3 +27,17 @@ interface Waybill {
   deliveryCharge: number;
   valueAddedTax: number;
 }
+
+type Customer = {
+  name: string;
+  nickname: string;
+  address: string;
+  city: string;
+  country: string;
+  email: string;
+  contact_no: string;
+  rate_volume_charge: number;
+  rate_weigh_charge: number;
+  rate_value_charge: number;
+  notes: string;
+};

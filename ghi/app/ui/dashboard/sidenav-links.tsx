@@ -51,7 +51,7 @@ const SideNavItemWithSubMenu = ({
       <button
         onClick={toggleSubMenu}
         className={clsx(
-          "w-full flex h-[48px] grow items-center gap-2 rounded-md bg-gray-50 p-3 text-sm hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3",
+          "w-full flex h-[48px] grow items-center gap-2 rounded-md bg-gray-50 p-3 text-sm hover:bg-bg1 hover:text-highlight1 md:flex-none md:justify-start md:p-2 md:px-3",
           {
             "font-bold": preOpenSubmenu,
             "font-medium": !preOpenSubmenu,

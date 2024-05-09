@@ -35,7 +35,7 @@ export default function TopNav() {
 
   return (
     <>
-      <div className="flex items-center justify-between flex-wrap bg-blue-500 px-6 py-3">
+      <div className="flex items-center justify-between flex-wrap bg-bg1 px-6 py-3">
         <Link
           href="/dashboard"
           className="flex items-center flex-shrink-0 text-white space-x-2"
