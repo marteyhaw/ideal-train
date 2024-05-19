@@ -364,6 +364,6 @@ View specific waybill and update details
 #### Supporting Features
 
 - Fetch all Customers (with necessary fields only) for Consignee and Shipper
-  dropdowns.s
+  dropdowns
 
 ---
