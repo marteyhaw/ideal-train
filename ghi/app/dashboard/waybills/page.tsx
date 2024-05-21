@@ -3,11 +3,11 @@ import { SearchBarWithDropdown } from "@/app/ui/forms/search-bar-dropdown";
 import WaybillsTable from "@/app/ui/dashboard/waybills/table";
 import Pagination from "@/app/ui/dashboard/customers/pagination";
 
-export default async function CustomersPage() {
+export default async function WaybillsPage() {
   return (
     <main>
       <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
-        Customer Search
+        Waybill Search
       </h1>
       <div className="flex flex-col w-full">
         <div className="w-full">
