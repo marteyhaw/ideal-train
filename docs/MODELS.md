@@ -81,6 +81,7 @@ class Location{
 }
 class Manifest{
   id
+  number
   destination
   container_id
   total_volume
@@ -223,7 +224,7 @@ Manifest --> Location : destination
 
 - id - ID, Auto Generated
 - number - Integer[12], Unique, Required
-- destination - String[20], Required
+- destination - String[20], Foreign Key[Location], Required
 - container_id - ID, Foreign Key[Containerization], Optional
 - total_volume - Decimal[12.6], Optional
 - total_weight - Decimal[12,6], Optional
@@ -253,7 +254,7 @@ Manifest --> Location : destination
 - number - Integer[12], Unique, Required
 - shipper - Integer[12], Foreign Key[Customer], Required
 - consigneee - Integer[12], Foreign Key[Customer], Required
-- destination - String[20], Required
+- destination - String[20], Foreign Key[Location], Required
 - origin_address - String[100], Optional
 - destination_address - String[100], Optional
 - created_date - DateTime, Required
@@ -263,7 +264,7 @@ Manifest --> Location : destination
 - total_cu_msmt_charge - Decimal[11.2], Optional
 - total_delivery_charge - Decimal[11.2], Optional
 - total_vat - Decimal[11.2], Optional
-- payment_terms - String[20], Optional
+- payment_terms - String[20], Foreign Key[PaymentTerms] Optional
 - notes - String[500], Optional
 - manifest_id - Integer[12], Foreign Key[Manifest], Optional
 - received_by - ID, Foreign Key[Employee], Required
