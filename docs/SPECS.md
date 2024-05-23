@@ -84,8 +84,15 @@ Show list of customers based on search query
 
 #### Supporting Features
 
-- Search string refers to Customer fields, including name, nickname, address,
-  and email.
+- Search string refers to select Customer fields with corresponding search
+  logic:
+
+| Field    |    Criteria    |
+| :------- | :------------: |
+| Name     | Wildcard Regex |
+| Nickname | Wildcard Regex |
+| Address  | Wildcard Regex |
+| Email    | Wildcard Regex |
 
 ---
 
@@ -194,8 +201,15 @@ Show list of manifests based on search query
 
 #### Supporting Features
 
-- Search string refers to Manifest fields, including name, nickname, address,
-  and email.
+- Search string refers to select Manifest fields with corresponding search
+  logic:
+
+| Field        |                Criteria                 |
+| :----------- | :-------------------------------------: |
+| Date         |                  Equal                  |
+| Manifest No. |             Wildcard Regex              |
+| Destination  |                  Equal                  |
+| Code         | Wildcard Regex on Containerization.Code |
 
 ---
 
@@ -308,15 +322,15 @@ Show list of waybills based on search query
 
 #### Supporting Features
 
-- Search string refers to Waybill select fields with corresponding search logic:
+- Search string refers to select Waybill fields with corresponding search logic:
 
-| Field       |            Criteria             |
-| :---------- | :-----------------------------: |
-| Date        |              Equal              |
-| Waybill No. |         Wildcard Regex          |
-| Destination |              Equal              |
-| Consignee   | Wildcard Regex on Customer Name |
-| Shipper     | Wildcard Regex on Customer Name |
+| Field       |                 Criteria                 |
+| :---------- | :--------------------------------------: |
+| Date        |                  Equal                   |
+| Waybill No. |              Wildcard Regex              |
+| Destination |                  Equal                   |
+| Consignee   | Wildcard Regex on Customer.name/nickname |
+| Shipper     | Wildcard Regex on Customer.name/nickname |
 
 ---
 
