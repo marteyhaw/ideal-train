@@ -12,7 +12,6 @@
   - [Location](#location)
   - [Manifest](#manifest)
   - [Manifest Status Log](#manifest-status-log)
-  - [Payment Terms](#payment-terms)
   - [Waybill](#waybill)
   - [Waybill Status Log](#waybill-status-log)
 
@@ -100,10 +99,6 @@ class ManifestStatusLog{
   logged_by
   logged_on
 }
-class PaymentTerms{
-  code
-  description
-}
 class Waybill{
   id
   number
@@ -149,7 +144,6 @@ Waybill <--* Cargo : 1..*
 Customer <-- Waybill : shipper
 Customer <-- Waybill : consignee
 Location <-- Waybill : destination
-PaymentTerms <-- Waybill : payment_terms
 Manifest --> Location : destination
 ```
 
@@ -242,11 +236,6 @@ Manifest --> Location : destination
 - location - String[50], Required
 - logged_by - ID, Foreign Key[Employee], Required
 - logged_on - DateTime, Required
-
-### Payment Terms
-
-- code - ID
-- description - String[50], Required
 
 ### Waybill
 
