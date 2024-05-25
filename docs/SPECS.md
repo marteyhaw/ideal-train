@@ -2,6 +2,21 @@
 
 ## Table of Contents
 
+### [General Terms](#general-terms)
+
+- [Payment Terms](#payment-terms)
+- [Status](#status)
+
+### [API List](#api-list)
+
+- [Customer APIs](#customer-apis)
+- [Manifest APIs](#manifest-apis)
+- [Manifest Status Log APIs](#manifest-status-log-apis)
+- [Waybill APIs](#waybill-apis)
+- [Waybill Status Log APIs](#waybill-status-log-apis)
+
+### [Modules](#modules)
+
 - [Customer Module](#customer-module)
   - [Create Customer](#create-customer)
   - [Search Customer](#search-customer)
@@ -16,6 +31,104 @@
   - [View and Edit Waybill](#view-and-editwaybill)
 
 ---
+
+## General Terms
+
+### Payment Terms
+
+| Code |       Term       | Desription                                          |
+| :--- | :--------------: | :-------------------------------------------------- |
+| ACC  |     Account      | Statement of Account is generated after term period |
+| COD  | Cash on Delivery | Payment is made on delivery completion              |
+| PPD  |     Prepaid      | Payment is made upfront                             |
+
+### Status
+
+| Code |     Term     | Desription                                                                                                               |
+| :--- | :----------: | :----------------------------------------------------------------------------------------------------------------------- |
+| RCVD |   Received   | Shipper drops off cargo and Waybill is created                                                                           |
+| LOAD |    Loaded    | Cargo is loaded into containerization and Waybill is added to Manifest                                                   |
+| TRNS |  In Transit  | Containerized cargos/waybill has departed receiving facility and is in transit to destination                            |
+| ARVD |   Arrived    | Containerized cargos/waybill has arrived at destination port/unloading yard                                              |
+| FRDV | For Delivery | Containerized cargos/waybill has been unloaded from container and is ready for unload at branch or straight for delivery |
+| DVRD |  Delivered   | Cargo has been delivered and Waybill is marked as delivered                                                              |
+
+---
+
+## API List
+
+## Customer APIs
+
+### Create Customer API
+
+- POST /api/v1/customers/
+
+### Get Customer API
+
+- GET /api/v1/customers/{customer_id}
+
+### Get Customer List API
+
+- GET /api/v1/customers/
+
+  - If search string is passed as a parameter, retrieve only the Customers that
+    match the search criteria. Refer to the following table for the
+    corresponding search logic per field:
+
+    | Field    |    Criteria    |
+    | :------- | :------------: |
+    | Name     | Wildcard Regex |
+    | Nickname | Wildcard Regex |
+    | Address  | Wildcard Regex |
+    | Email    | Wildcard Regex |
+
+### Update Customer API
+
+- PATCH /api/v1/customers/{customer_id}
+
+---
+
+## Manifest APIs
+
+---
+
+## Manifest Status Log APIs
+
+---
+
+## Waybill APIs
+
+### Create Waybill API
+
+- POST /api/v1/waybills/
+
+  - Creates Waybill, accompanying Cargo entries, and initial WaybillStatusLog
+    entry as an atomic database transaction.
+  - WaybillStatusLog default values:
+
+    | Field            |                   Details                   |
+    | :--------------- | :-----------------------------------------: |
+    | Waybill ID       |            Generated Waybill ID             |
+    | Status Date Time |              Current Timestamp              |
+    | Status Current   |        "RCVD", see [Status](#status)        |
+    | Status Date Time |              Current Timestamp              |
+    | Location         | Receiving Station/Encoder Employee Location |
+    | Logged By        |              Encoder Employee               |
+    | Logged On        |              Current Timestamp              |
+
+### Get Waybill API
+
+### Get Waybill List API
+
+### Update Waybill API
+
+---
+
+### Waybill Status Log APIs
+
+---
+
+## Modules
 
 ## Customer Module
 
@@ -50,7 +163,7 @@ Adds a new customer to the database
 
 #### APIs
 
-1. POST /api/v1/customers/
+1. [POST /api/v1/customers/](#create-customer)
 
 #### Supporting Features
 
@@ -80,19 +193,13 @@ Show list of customers based on search query
 
 #### APIs
 
-1. GET /api/v1/customers/
+1. [GET /api/v1/customers/](#get-customer-list-api)
+
+- Pass Search Bar string as a parameter
 
 #### Supporting Features
 
-- Search string refers to select Customer fields with corresponding search
-  logic:
-
-| Field    |    Criteria    |
-| :------- | :------------: |
-| Name     | Wildcard Regex |
-| Nickname | Wildcard Regex |
-| Address  | Wildcard Regex |
-| Email    | Wildcard Regex |
+- N/A
 
 ---
 
@@ -259,7 +366,9 @@ Adds a new waybill to the database
 
 #### Prerequisites
 
-- Customer
+- Customer (at least one entry)
+- Employee (at least one entry)
+- Location (at least one entry)
 
 #### Users
 
@@ -267,34 +376,33 @@ Adds a new waybill to the database
 
 #### Validation Requirements
 
-| Field               | Mandatory | Restrictions             |
-| :------------------ | :-------: | :----------------------- |
-| Waybill No.         |     Y     | Max Length: 12; _Unique_ |
-| Account Type        |     Y     | Lookup: PaymentTerms     |
-| Consignee           |     Y     | Lookup: Customers        |
-| Destination         |     Y     | Lookup: Location         |
-| Address (Consignee) |     N     | Max Length 100           |
-| Date                |     Y     |                          |
-| Shipper             |     Y     | Lookup: Customers        |
-| Received at         |     Y     | Lookup: Location         |
-| Address (Shipper)   |     Y     | Max Length 100           |
-| Received by         |     Y     | Lookup: Employee         |
-| Volume Charge       |     N     | Decimal 11.25            |
-| Value Charge        |     N     | Decimal 11.25            |
-| Misc Charge         |     N     | Decimal 11.25            |
-| Weight Charge       |     N     | Decimal 11.25            |
-| Delivery Charge     |     N     | Decimal 11.25            |
-| Value-added Tax     |     N     | Decimal 11.25            |
-| Notes               |     N     | Max Length 500           |
+| Field               | Mandatory | Restrictions                                                                                                   |
+| :------------------ | :-------: | :------------------------------------------------------------------------------------------------------------- |
+| Waybill No.         |     Y     | Max Length: 12; _Unique_                                                                                       |
+| Account Type        |     Y     | Dropdown based on [Payment Terms](#payment-terms)                                                              |
+| Consignee           |     Y     | Dropdown based on Customer (label: nickname/name, value: id)                                                   |
+| Destination         |     Y     | Dropdown based on Location (label: description, value: code)                                                   |
+| Address (Consignee) |     N     | Max Length 100                                                                                                 |
+| Date                |     Y     |                                                                                                                |
+| Shipper             |     Y     | Dropdown based on Customer (label: nickname/name, value: id)                                                   |
+| Received at         |     Y     | Dropdown based on Location (label: description, value: code); default value is Encoder's Employee local office |
+| Address (Shipper)   |     Y     | Max Length 100                                                                                                 |
+| Received by         |     Y     | Dropdown based on Employee (label: full name, value: id)                                                       |
+| Volume Charge       |     N     | Decimal 11.25                                                                                                  |
+| Value Charge        |     N     | Decimal 11.25                                                                                                  |
+| Misc Charge         |     N     | Decimal 11.25                                                                                                  |
+| Weight Charge       |     N     | Decimal 11.25                                                                                                  |
+| Delivery Charge     |     N     | Decimal 11.25                                                                                                  |
+| Value-added Tax     |     N     | Decimal 11.25                                                                                                  |
+| Notes               |     N     | Max Length 500                                                                                                 |
 
 #### APIs
 
-1. GET /api/v1/customers/
+1. [POST /api/v1/waybills/](#create-waybill-api)
 
 #### Supporting Features
 
-- Fetch all Customers (with necessary fields only) for Consignee and Shipper
-  dropdowns.
+- N/A
 
 ---
 
@@ -343,6 +451,8 @@ View specific waybill and update details
 #### Prerequisites
 
 - Customer
+- Employee
+- Location
 
 #### Users
 
@@ -350,25 +460,25 @@ View specific waybill and update details
 
 #### Validation Requirements
 
-| Field               | Mandatory | Restrictions         |
-| :------------------ | :-------: | :------------------- |
-| Waybill No.         | READ ONLY |                      |
-| Account Type        |     Y     | Lookup: PaymentTerms |
-| Consignee           |     Y     | Lookup: Customers    |
-| Destination         |     Y     | Lookup: Location     |
-| Address (Consignee) |     N     | Max Length 100       |
-| Date                |     Y     |                      |
-| Shipper             |     Y     | Lookup: Customers    |
-| Received at         |     Y     | Lookup: Location     |
-| Address (Shipper)   |     Y     | Max Length 100       |
-| Received by         |     Y     | Lookup: Employee     |
-| Volume Charge       |     N     | Decimal 11.25        |
-| Value Charge        |     N     | Decimal 11.25        |
-| Misc Charge         |     N     | Decimal 11.25        |
-| Weight Charge       |     N     | Decimal 11.25        |
-| Delivery Charge     |     N     | Decimal 11.25        |
-| Value-added Tax     |     N     | Decimal 11.25        |
-| Notes               |     N     | Max Length 500       |
+| Field               | Mandatory | Restrictions                                                                                                   |
+| :------------------ | :-------: | :------------------------------------------------------------------------------------------------------------- |
+| Waybill No.         | READ ONLY |                                                                                                                |
+| Account Type        |     Y     | Dropdown based on [Payment Terms](#payment-terms)                                                              |
+| Consignee           |     Y     | Dropdown based on Customer (label: nickname/name, value: id)                                                   |
+| Destination         |     Y     | Dropdown based on Location (label: description, value: code)                                                   |
+| Address (Consignee) |     N     | Max Length 100                                                                                                 |
+| Date                |     Y     |                                                                                                                |
+| Shipper             |     Y     | Dropdown based on Customer (label: nickname/name, value: id)                                                   |
+| Received at         |     Y     | Dropdown based on Location (label: description, value: code); default value is Encoder's Employee local office |
+| Address (Shipper)   |     Y     | Max Length 100                                                                                                 |
+| Received by         |     Y     | Dropdown based on Employee (label: full name, value: id)                                                       |
+| Volume Charge       |     N     | Decimal 11.25                                                                                                  |
+| Value Charge        |     N     | Decimal 11.25                                                                                                  |
+| Misc Charge         |     N     | Decimal 11.25                                                                                                  |
+| Weight Charge       |     N     | Decimal 11.25                                                                                                  |
+| Delivery Charge     |     N     | Decimal 11.25                                                                                                  |
+| Value-added Tax     |     N     | Decimal 11.25                                                                                                  |
+| Notes               |     N     | Max Length 500                                                                                                 |
 
 #### APIs
 
