@@ -1,10 +1,14 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 const customerFields: string[][] = [
   ["name", "Name"],
   ["city", "City"],
   ["email", "Email"],
-  ["contactNo", "Contact No."],
-  ["volumeRate", "Volume Rate"],
-  ["valueCharge", "Value Charge"],
+  ["contact_no", "Contact No."],
+  ["rate_volume_charge", "Volume Rate"],
+  ["rate_value_charge", "Value Rate"],
 ];
 
 const customers: { [key: string]: string | number }[] = [
@@ -35,6 +39,26 @@ const customers: { [key: string]: string | number }[] = [
 ];
 
 export default function CustomersTable() {
+  const [customers, setCustomers] = useState<
+    { [key: string]: string | number }[]
+  >([]);
+
+  useEffect(() => {
+    async function fetchCustomers() {
+      try {
+        const response = await fetch("http://localhost:8000/api/v1/customers/"); // Adjust this URL to your backend
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setCustomers(data); // Assuming the backend returns an array of customers
+      } catch (error) {
+        console.error("Failed to fetch customers:", error);
+      }
+    }
+
+    fetchCustomers();
+  }, []);
   return (
     <>
       {/* Mobile view */}
@@ -49,15 +73,15 @@ export default function CustomersTable() {
                 <div className="mb-2 flex items-center">
                   <p>{customer.name}</p>
                 </div>
-                <p className="text-sm text-gray-500">{customer.contactNo}</p>
+                <p className="text-sm text-gray-500">{customer.contact_no}</p>
                 <p className="text-sm text-gray-500">{customer.email}</p>
               </div>
               {customer.city}
             </div>
             <div className="flex w-full items-center justify-between pt-4">
               <div>
-                <p>Volume Rate: {customer.volumeRate}</p>
-                <p>Value Charge: {customer.valueCharge}</p>
+                <p>Volume Rate: {customer.rate_volume_charge}</p>
+                <p>Value Charge: {customer.rate_value_charge}</p>
               </div>
               <div className="flex justify-end gap-2">
                 <p className="text-blue-600">Edit</p>
@@ -87,7 +111,7 @@ export default function CustomersTable() {
         <tbody className="bg-white">
           {customers?.map((customer) => (
             <tr
-              key={customer.name}
+              key={customer.id}
               className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg hover:bg-gray-100"
             >
               {customerFields.map((field, idx) => {

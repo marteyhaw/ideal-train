@@ -6,11 +6,12 @@ import { Input } from "@/app/ui/forms/input";
 import { TextArea } from "@/app/ui/forms/textarea";
 import { countryList } from "@/app/fe-lib/countries";
 import { useState } from "react";
+import { CustomerCreate } from "@/app/fe-lib/definitions";
 
 const defaultCountry = "PH";
 
 export default function CustomerForm() {
-  const [customer, setCustomer] = useState<Customer>({
+  const [customer, setCustomer] = useState<CustomerCreate>({
     name: "",
     nickname: "",
     address: "",

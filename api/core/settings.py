@@ -3,7 +3,9 @@ from typing import Annotated
 from pydantic import AfterValidator, HttpUrl, validator
 from pydantic_settings import BaseSettings
 
-HttpUrlString = Annotated[HttpUrl, AfterValidator(str)]
+HttpUrlString = Annotated[
+    HttpUrl, AfterValidator(lambda v: str(v).rstrip("/"))
+]
 
 
 class Settings(BaseSettings):

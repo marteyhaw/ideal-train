@@ -35,6 +35,26 @@ const waybills: { [key: string]: string | number }[] = [
 ];
 
 export default function WaybillsTable() {
+  // const [waybills, setWaybills] = useState<
+  //   { [key: string]: string | number }[]
+  // >([]);
+
+  // useEffect(() => {
+  //   async function fetchWaybills() {
+  //     try {
+  //       const response = await fetch("http://localhost:8000/api/v1/waybills/");
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok");
+  //       }
+  //       const data = await response.json();
+  //       setWaybills(data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch customers:", error);
+  //     }
+  //   }
+
+  //   fetchWaybills();
+  // }, []);
   return (
     <>
       {/* Mobile view */}
