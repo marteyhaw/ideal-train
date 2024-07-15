@@ -44,14 +44,14 @@
 
 ### Status
 
-| Code |     Term     | Desription                                                                                                               |
-| :--- | :----------: | :----------------------------------------------------------------------------------------------------------------------- |
-| RCVD |   Received   | Shipper drops off cargo and Waybill is created                                                                           |
-| LOAD |    Loaded    | Cargo is loaded into containerization and Waybill is added to Manifest                                                   |
-| TRNS |  In Transit  | Containerized cargos/waybill has departed receiving facility and is in transit to destination                            |
-| ARVD |   Arrived    | Containerized cargos/waybill has arrived at destination port/unloading yard                                              |
-| FRDV | For Delivery | Containerized cargos/waybill has been unloaded from container and is ready for unload at branch or straight for delivery |
-| DVRD |  Delivered   | Cargo has been delivered and Waybill is marked as delivered                                                              |
+| Code |     Term     | Desription                                                                                                               | Location    |
+| :--- | :----------: | :----------------------------------------------------------------------------------------------------------------------- | :---------- |
+| RCVD |   Received   | Shipper drops off cargo and Waybill is created                                                                           | Origin      |
+| LOAD |    Loaded    | Cargo is loaded into containerization and Waybill is added to Manifest                                                   | Origin      |
+| TRNS |  In Transit  | Containerized cargos/waybill has departed receiving facility and is in transit to destination                            | Origin      |
+| ARVD |   Arrived    | Containerized cargos/waybill has arrived at destination port/unloading yard                                              | Destination |
+| FRDV | For Delivery | Containerized cargos/waybill has been unloaded from container and is ready for unload at branch or straight for delivery | Destination |
+| DVRD |  Delivered   | Cargo has been delivered and Waybill is marked as delivered                                                              | Destination |
 
 ---
 
@@ -106,15 +106,27 @@
     entry as an atomic database transaction.
   - WaybillStatusLog default values:
 
-    | Field            |                   Details                   |
-    | :--------------- | :-----------------------------------------: |
-    | Waybill ID       |            Generated Waybill ID             |
-    | Status Date Time |              Current Timestamp              |
-    | Status Current   |        "RCVD", see [Status](#status)        |
-    | Status Date Time |              Current Timestamp              |
-    | Location         | Receiving Station/Encoder Employee Location |
-    | Logged By        |              Encoder Employee               |
-    | Logged On        |              Current Timestamp              |
+    | Label            | Field           | Details                         |
+    | :--------------- | :-------------- | :------------------------------ |
+    | Waybill ID       | waybill_id      | Generated Waybill ID (UUID)     |
+    | Status Date Time | status_datetime | Current Date Time               |
+    | Current Status   | status_current  | "RCVD", see [Status](#status)   |
+    | Location         | location        | Encoder's Employee.local_office |
+    | Logged By        | logged_by       | Encoder's Employee.id           |
+    | Logged On        | logged_on       | Current Date Time               |
+
+    Sample:
+
+    ```json
+    {
+      "waybill_id": "061270b7-b4ed-4431-b37d-7350577499ec",
+      "status_datetime": "2024-05-24 19:35:41.414540",
+      "status_current": "RCVD",
+      "location": "MNL",
+      "logged_by": "9bd0895d-a287-44ba-b2b0-dc6c15d035c8",
+      "logged_on": "2024-05-24 19:35:41.414540"
+    }
+    ```
 
 ### Get Waybill API
 
@@ -472,12 +484,12 @@ View specific waybill and update details
 | Received at         |     Y     | Dropdown based on Location (label: description, value: code); default value is Encoder's Employee local office |
 | Address (Shipper)   |     Y     | Max Length 100                                                                                                 |
 | Received by         |     Y     | Dropdown based on Employee (label: full name, value: id)                                                       |
-| Volume Charge       |     N     | Decimal 11.25                                                                                                  |
-| Value Charge        |     N     | Decimal 11.25                                                                                                  |
-| Misc Charge         |     N     | Decimal 11.25                                                                                                  |
-| Weight Charge       |     N     | Decimal 11.25                                                                                                  |
-| Delivery Charge     |     N     | Decimal 11.25                                                                                                  |
-| Value-added Tax     |     N     | Decimal 11.25                                                                                                  |
+| Volume Charge       |     N     | Decimal 11.2                                                                                                   |
+| Value Charge        |     N     | Decimal 11.2                                                                                                   |
+| Misc Charge         |     N     | Decimal 11.2                                                                                                   |
+| Weight Charge       |     N     | Decimal 11.2                                                                                                   |
+| Delivery Charge     |     N     | Decimal 11.2                                                                                                   |
+| Value-added Tax     |     N     | Decimal 11.2                                                                                                   |
 | Notes               |     N     | Max Length 500                                                                                                 |
 
 #### APIs
