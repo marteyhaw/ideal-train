@@ -1,2 +1,2 @@
 [flake8]
-exclude = app,public
+exclude = app,public,api/alembic/versions

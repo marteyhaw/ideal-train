@@ -1,15 +1,10 @@
 from functools import lru_cache
 
-import models
-from core.database import engine
 from core.settings import Settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.main import api_router
-
-models.Base.metadata.drop_all(bind=engine)
-models.Base.metadata.create_all(bind=engine)
 
 
 @lru_cache
