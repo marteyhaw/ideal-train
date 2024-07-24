@@ -128,7 +128,6 @@ class CargoCreate(CargoBase):
 
 class CargoUpdate(CargoBase):
     id: UUID | None = None
-    waybill_id: UUID | None = None
 
 
 class Cargo(CargoBase):

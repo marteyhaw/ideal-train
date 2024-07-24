@@ -163,6 +163,58 @@ async def create_waybill(
     return db_waybill
 
 
+@router.patch("/{waybill_id}", response_model=schemas.Waybill)
+async def update_waybill(
+    waybill_id: UUID,
+    waybill_update: schemas.WaybillUpdate,
+    db: Session = Depends(get_db),
+):
+    """
+    Update a waybill.
+    """
+    new_cargo = []
+    for cargo in waybill_update.cargos:
+        if cargo.id is None:
+            new_cargo.append(schemas.CargoCreate(**cargo.model_dump()))
+        else:
+            db_cargo = crud.get_cargo_by_id(db, uuid=cargo.id)
+            if db_cargo is None:
+                raise HTTPException(
+                    status_code=400, detail="Bad cargo request"
+                )
+            elif (
+                db_cargo.waybill_id is None
+                or db_cargo.waybill_id != waybill_id
+            ):
+                raise HTTPException(
+                    status_code=400, detail="Bad cargo request"
+                )
+    waybill_update.cargos = [
+        cargo for cargo in waybill_update.cargos if cargo.id is not None
+    ]
+    db_shipper = crud.get_customer_by_id(db, uuid=waybill_update.shipper_id)
+    if not db_shipper:
+        raise HTTPException(status_code=400, detail="Invalid shipper")
+    db_consignee = crud.get_customer_by_id(
+        db, uuid=waybill_update.consignee_id
+    )
+    if not db_consignee:
+        raise HTTPException(status_code=400, detail="Invalid consignee")
+    db_waybill = crud.get_waybill_by_id(db, uuid=waybill_id)
+    if db_waybill is None:
+        raise HTTPException(status_code=404, detail="Waybill not found")
+    updated_waybill = await crud.update_waybill(
+        db,
+        uuid=waybill_id,
+        waybill_update_data=waybill_update,
+        new_cargo=new_cargo,
+    )
+    if not updated_waybill:
+        raise HTTPException(status_code=400, detail="Bad request")
+
+    return updated_waybill
+
+
 @router.post("/update_status")
 async def update_waybill_status(
     waybill_status_log: schemas.WaybillStatusLogCreate,
