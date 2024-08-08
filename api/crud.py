@@ -316,6 +316,40 @@ async def create_waybill(
     return db_waybill
 
 
+async def update_waybill(
+    db: Session,
+    uuid: UUID,
+    waybill_update_data: schemas.WaybillUpdate,
+    new_cargo: list[schemas.CargoCreate],
+) -> Waybill | None:
+    for cargo in new_cargo:
+        cargo_to_add = Cargo(**cargo.model_dump())
+        cargo_to_add.waybill_id = uuid
+        db.add(cargo_to_add)
+    for cargo in waybill_update_data.cargos:
+        cargo_to_update = db.query(Cargo).filter(Cargo.id == cargo.id)
+        cargo_to_update.first()
+        cargo_to_update.update(
+            cargo.model_dump(),
+            synchronize_session=False,
+        )
+    cargos_stmt = select(Cargo).filter(Cargo.waybill_id == uuid)
+    cargos = db.scalars(cargos_stmt).all()
+    delattr(waybill_update_data, "cargos")
+    db_waybill = db.query(Waybill).filter(Waybill.id == uuid)
+    db_waybill.first()
+    db_waybill.update(
+        waybill_update_data.model_dump(),
+        synchronize_session=False,
+    )
+    db_upd_waybill = db_waybill.first()
+    db_upd_waybill.cargos = cargos
+    db.commit()
+    db.refresh(db_upd_waybill)
+
+    return db_upd_waybill
+
+
 async def create_waybill_status_log(
     db: Session,
     waybill_status_log: schemas.WaybillStatusLogCreate,
@@ -331,6 +365,10 @@ async def create_waybill_status_log(
 # CARGO
 def get_cargos(db: Session, skip: int = 0, limit: int = 100) -> list[Cargo]:
     return db.query(Cargo).offset(skip).limit(limit).all()
+
+
+def get_cargo_by_id(db: Session, uuid: UUID) -> Cargo | None:
+    return db.query(Cargo).filter(Cargo.id == uuid).first()
 
 
 def create_cargo(
