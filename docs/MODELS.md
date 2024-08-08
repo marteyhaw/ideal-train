@@ -12,7 +12,6 @@
   - [Location](#location)
   - [Manifest](#manifest)
   - [Manifest Status Log](#manifest-status-log)
-  - [Payment Terms](#payment-terms)
   - [Waybill](#waybill)
   - [Waybill Status Log](#waybill-status-log)
 
@@ -100,10 +99,6 @@ class ManifestStatusLog{
   logged_by
   logged_on
 }
-class PaymentTerms{
-  code
-  description
-}
 class Waybill{
   id
   number
@@ -149,7 +144,6 @@ Waybill <--* Cargo : 1..*
 Customer <-- Waybill : shipper
 Customer <-- Waybill : consignee
 Location <-- Waybill : destination
-PaymentTerms <-- Waybill : payment_terms
 Manifest --> Location : destination
 ```
 
@@ -189,7 +183,7 @@ Manifest --> Location : destination
 - id - ID, Auto Generated
 - code - String[20], Required
 - carrier_id - Integer[12], FK[Carrier], Required
-- created_date - DateTime, Required
+- container_date - DateTime, Required
 
 ### Customer
 
@@ -225,7 +219,7 @@ Manifest --> Location : destination
 - id - ID, Auto Generated
 - number - Integer[12], Unique, Required
 - destination - String[20], Foreign Key[Location], Required
-- container_id - ID, Foreign Key[Containerization], Optional
+- containerization_id - ID, Foreign Key[Containerization], Optional
 - total_volume - Decimal[12.6], Optional
 - total_weight - Decimal[12,6], Optional
 - checked_by - ID, Foriegn Key[Employee], Required
@@ -239,14 +233,10 @@ Manifest --> Location : destination
 - manifest_id - ID, Foreign Key[Manifest], Required
 - status_datetime - DateTime, Required
 - status_current - String[20], Required
-- location - String[50], Required
+- location - String[20], Required
+- notes - String[500], Optional
 - logged_by - ID, Foreign Key[Employee], Required
 - logged_on - DateTime, Required
-
-### Payment Terms
-
-- code - ID
-- description - String[50], Required
 
 ### Waybill
 
@@ -278,6 +268,7 @@ Manifest --> Location : destination
 - waybill_id - ID, Foreign Key[Waybill], Required
 - status_datetime - DateTime, Required
 - status_current - String[20], Required
-- location - String[50], Required
+- location - String[20], Required
+- notes - String[500], Optional
 - logged_by - ID, Foreign Key[Employee], Required
 - logged_on - DateTime, Required
