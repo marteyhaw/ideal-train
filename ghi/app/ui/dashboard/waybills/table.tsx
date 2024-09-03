@@ -1,83 +1,65 @@
-const waybillsFields: string[][] = [
-  ["date", "Date"],
-  ["waybillNo", "Waybill No."],
-  ["destination", "Destination"],
-  ["cosignee", "Cosignee"],
-  ["volume", "Volume"],
-  ["status", "Status"],
-];
+"use client";
 
-const waybills: { [key: string]: string | number }[] = [
-  {
-    date: "02/15/2024",
-    waybillNo: "AR-000001",
-    destination: "CEBU",
-    cosignee: "Customer 1",
-    volume: 10,
-    status: "Recieved",
-  },
-  {
-    date: "02/24/2024",
-    waybillNo: "AR-000002",
-    destination: "CEBU",
-    cosignee: "Customer 2",
-    volume: 14,
-    status: "In Transit",
-  },
-  {
-    date: "02/28/2024",
-    waybillNo: "AR-000003",
-    destination: "BATTAAN",
-    cosignee: "Customer 1",
-    volume: 18,
-    status: "Recieved",
-  },
+import { Waybill } from "@/app/fe-lib/definitions";
+import { useState, useEffect } from "react";
+
+const waybillsFields: string[][] = [
+  ["created_date", "Date"],
+  ["number", "Waybill No."],
+  ["destination", "Destination"],
+  ["consignee", "Consignee"],
+  ["total_vat", "Volume"],
 ];
 
 export default function WaybillsTable() {
-  // const [waybills, setWaybills] = useState<
-  //   { [key: string]: string | number }[]
-  // >([]);
+  const [waybills, setWaybills] = useState<Waybill[]>([]);
 
-  // useEffect(() => {
-  //   async function fetchWaybills() {
-  //     try {
-  //       const response = await fetch("http://localhost:8000/api/v1/waybills/");
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       const data = await response.json();
-  //       setWaybills(data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch customers:", error);
-  //     }
-  //   }
+  useEffect(() => {
+    async function fetchWaybills() {
+      try {
+        const response = await fetch("http://localhost:8000/api/v1/waybills/");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data: Waybill[] = await response.json();
+        const waybillsWithDates = data.map((waybill: Waybill) => ({
+          ...waybill,
+          created_date: new Date(waybill.created_date),
+        }));
+        setWaybills(waybillsWithDates);
+      } catch (error) {
+        console.error("Failed to fetch customers:", error);
+      }
+    }
 
-  //   fetchWaybills();
-  // }, []);
+    fetchWaybills();
+  }, []);
+
   return (
     <>
       {/* Mobile view */}
       <div className="md:hidden">
         {waybills?.map((waybill) => (
           <div
-            key={waybill.waybillNo}
+            key={waybill.id}
             className="mb-2 w-full rounded-md bg-white p-4 hover:bg-gray-200"
           >
             <div className="flex items-center justify-between border-b pb-4">
               <div>
                 <div className="mb-2 flex items-center">
-                  <p>{waybill.date}</p>
+                  <p>{waybill.created_date.toLocaleDateString()}</p>
                 </div>
-                <p className="text-sm text-gray-500">{waybill.cosignee}</p>
+                <p className="text-sm text-gray-500">
+                  {waybill.consignee.name}
+                </p>
                 <p className="text-sm text-gray-500">{waybill.destination}</p>
               </div>
-              {waybill.waybillNo}
+              {waybill.number}
             </div>
             <div className="flex w-full items-center justify-between pt-4">
               <div>
-                <p>Volume Rate: {waybill.volume}</p>
-                <p>Value Charge: {waybill.status}</p>
+                <p>Volume Rate: {waybill.total_vat}</p>
+                <p>Value Charge: {waybill.total_amount}</p>
               </div>
               <div className="flex justify-end gap-2">
                 <p className="text-blue-600">Edit</p>
@@ -107,13 +89,19 @@ export default function WaybillsTable() {
         <tbody className="bg-white">
           {waybills?.map((waybill) => (
             <tr
-              key={waybill.waybillNo}
+              key={waybill.id}
               className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg hover:bg-gray-100"
             >
               {waybillsFields.map((field, idx) => {
+                let fieldValue = waybill[field[0] as keyof Waybill];
+                if (fieldValue instanceof Date) {
+                  fieldValue = fieldValue.toLocaleDateString();
+                }
                 return (
                   <td className="whitespace-nowrap px-3 py-3" key={idx}>
-                    {waybill[field[0]]}
+                    {typeof fieldValue === "object" && fieldValue
+                      ? fieldValue.name
+                      : fieldValue}
                   </td>
                 );
               })}

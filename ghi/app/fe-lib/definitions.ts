@@ -132,6 +132,17 @@ export interface WaybillCreate extends WaybillBase {
 
 export interface Waybill extends WaybillBase {
   id: string;
+  origin_address?: string;
+  destination_address?: string;
+  total_amount?: number;
+  total_weight_charge?: number;
+  total_value_charge?: number;
+  total_cu_msmt_charge?: number;
+  total_delivery_charge?: number;
+  total_vat?: number;
+  payment_terms?: string;
+  notes?: string;
+  manifest_id?: Manifest;
 }
 
 // Cargo
@@ -172,4 +183,11 @@ export interface ManifestCreate extends ManifestBase {
 
 export interface Manifest extends ManifestBase {
   id: string;
+  conatiner_id?: Containerization;
+  total_volume?: number;
+  total_weight?: number;
+  checked_by?: Employee;
+  created_date?: Date; //When the waybill is created (in person)
+  encoded_by?: Employee;
+  encoded_on?: Date; //When the waybill is entered into the website
 }
