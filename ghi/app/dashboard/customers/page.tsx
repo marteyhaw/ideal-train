@@ -1,9 +1,21 @@
+"use client";
+
 import { roboto } from "@/app/ui/fonts";
 import { SearchBarWithDropdown } from "@/app/ui/forms/search-bar-dropdown";
-import CustomersTable from "@/app/ui/dashboard/customers/table";
+import CustomersTable, {
+  ITEMS_PER_PAGE,
+} from "@/app/ui/dashboard/customers/table";
 import Pagination from "@/app/ui/dashboard/customers/pagination";
+import { SetStateAction, Suspense, useEffect, useState } from "react";
 
-export default async function CustomersPage() {
+export default async function CustomersPage(props: {
+  searchParams?: Promise<{ query?: string; skip?: string; limit?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const searchTerm = searchParams?.query || "";
+  const skip = Number(searchParams?.skip) || 0;
+  const limit = Number(searchParams?.limit) || ITEMS_PER_PAGE;
+
   return (
     <main>
       <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
@@ -14,10 +26,9 @@ export default async function CustomersPage() {
           <SearchBarWithDropdown />
         </div>
         <div className="rounded-lg py-2 mt-4">
-          <CustomersTable />
-        </div>
-        <div className="mt-5 flex w-full justify-center space-x-1">
-          <Pagination />
+          <Suspense key={searchTerm + skip + limit}>
+            <CustomersTable />
+          </Suspense>
         </div>
       </div>
     </main>

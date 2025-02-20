@@ -60,8 +60,6 @@ export interface Employee extends EmployeeBase {
 // Customers
 export interface CustomerBase {
   name: string;
-  email: string;
-  contact_no: string;
 }
 
 export interface CustomerCreate extends CustomerBase {
@@ -69,13 +67,15 @@ export interface CustomerCreate extends CustomerBase {
   address: string;
   city: string;
   country: string;
+  email: string;
+  contact_no: string;
   rate_volume_charge: number;
   rate_weigh_charge: number;
   rate_value_charge: number;
   notes: string;
 }
 
-export interface Customer extends CustomerBase {
+export interface Customer extends CustomerCreate {
   id: string;
 }
 
