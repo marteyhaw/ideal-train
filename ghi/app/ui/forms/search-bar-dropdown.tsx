@@ -1,7 +1,9 @@
 "use client";
 
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
@@ -30,10 +32,24 @@ const DropdownOption = ({ children, ...rest }: ButtonProps) => {
 };
 
 export function SearchBarWithDropdown() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
-  const handleDropdownClick = () => {
-    setShowDropdown(!showDropdown);
-  };
+  const handleDropdownClick = useCallback(() => {
+    setShowDropdown((prev) => !prev);
+  }, []);
+  const handleSearch = useDebouncedCallback((term: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (term.trim() === searchParams.get("query")) return;
+    if (term) {
+      params.set("query", term);
+    } else {
+      params.delete("query");
+    }
+
+    replace(`${pathname}?${params.toString()}`);
+  }, 300);
 
   return (
     <form className="flex w-full">
@@ -82,19 +98,25 @@ export function SearchBarWithDropdown() {
         <input
           type="search"
           id="search"
-          className="block py-3 pl-3 pr-14 md:pr-28 w-full text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-2 focus:ring-blue-300 focus:border-blue-500 focus:outline-none"
+          className="dark:text-black block py-3 pl-3 pr-14 md:pr-28 w-full text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-2 focus:ring-blue-300 focus:border-blue-500 focus:outline-none"
           placeholder="Please enter..."
+          defaultValue={searchParams.get("query")?.toString()}
+          onChange={(e) => {
+            handleSearch(e.target.value);
+          }}
           required
         />
+        {/* In case search is called on submit vs on query change
         <button
           type="submit"
-          className="absolute top-0 end-0 p-3 text-sm font-medium h-full text-white bg-blue-700 border rounded-e-lg border-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          className="dark:text-black absolute top-0 end-0 p-3 text-sm font-medium h-full bg-blue-700 border rounded-e-lg border-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
         >
           <div className="flex items-center justify-center space-x-2">
             <MagnifyingGlassIcon className="w-5 h-5 [&>path]:stroke-[2]" />
             <span className="hidden lg:inline font-bold">Search</span>
           </div>
         </button>
+        */}
       </div>
     </form>
   );

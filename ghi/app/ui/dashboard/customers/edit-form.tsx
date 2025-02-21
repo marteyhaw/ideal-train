@@ -1,41 +1,54 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { Select } from "@/app/ui/forms/select";
 import { Label } from "@/app/ui/forms/label";
 import { Input } from "@/app/ui/forms/input";
 import { TextArea } from "@/app/ui/forms/textarea";
 import { countryList } from "@/app/fe-lib/countries";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { CustomerCreate } from "@/app/fe-lib/definitions";
+import { Customer } from "@/app/fe-lib/definitions";
 
-const defaultCountry = "PH";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export default function CustomerForm() {
+export default function EditCustomerForm() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { id } = useParams();
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [customer, setCustomer] = useState<CustomerCreate>({
-    name: "",
-    nickname: "",
-    address: "",
-    city: "",
-    country: defaultCountry,
-    email: "",
-    contact_no: "",
-    rate_volume_charge: 0,
-    rate_weigh_charge: 0,
-    rate_value_charge: 0,
-    notes: "",
-  });
+  const [updatedFields, setUpdatedFields] = useState<Partial<Customer>>({});
+
+  useEffect(() => {
+    async function fetchCustomer() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/customers/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch customer data.");
+        }
+        const data = await response.json();
+        setCustomer(data);
+      } catch (error) {
+        console.error("Error fetching customer:", error);
+        setError("Failed to load customer data.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchCustomer();
+  }, [id]);
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
+    if (!customer) return;
     const { name, value } = e.target;
-    setCustomer({ ...customer, [name]: value });
+
+    setCustomer((prev) => (prev ? { ...prev, [name]: value } : null));
+    setUpdatedFields((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,45 +56,37 @@ export default function CustomerForm() {
     setIsLoading(true);
     setError(null);
 
-    if (!customer.name || !customer.email) {
-      setError("Customer Name and Email are required.");
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/customers/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(customer),
+      const response = await fetch(`${API_BASE_URL}/api/v1/customers/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedFields),
       });
 
       if (!response.ok) {
-        throw new Error(`Request could not be completed`);
+        throw new Error("Failed to update customer.");
       }
 
-      const data = await response.json();
-
-      router.push(`/dashboard/customers/view/${data.id}`);
+      router.push(`/dashboard/customers/view/${id}`);
     } catch (error) {
-      if (error instanceof Error) {
-        console.error("ERROR:", error);
-        setError(error.message);
-      }
+      console.error("Error updating customer:", error);
+      setError("Failed to update customer.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  if (isLoading) return <p className="text-center">Loading customer data...</p>;
+  if (!customer) return <p className="text-center text-red-500">{error}</p>;
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col w-full">
         {error && <div style={{ color: "red" }}>{error}</div>}
+
         {/* Top Section */}
         <div className="flex flex-wrap">
-          {/* Customer Name, Street Address, City, & Country */}
+          {/* Customer Name (Disabled) */}
           <div className="w-full md:w-2/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
               <Label htmlFor="name">Customer Name</Label>
@@ -89,23 +94,23 @@ export default function CustomerForm() {
                 id="name"
                 name="name"
                 type="text"
-                placeholder="Customer Name"
                 value={customer.name}
-                onChange={handleChange}
-                required
+                disabled
+                className="bg-gray-200 cursor-not-allowed"
               />
             </div>
+
             <div className="block mb-3">
               <Label htmlFor="address">Street Address</Label>
               <Input
                 id="address"
                 name="address"
                 type="text"
-                placeholder="Street Address"
                 value={customer.address}
                 onChange={handleChange}
               />
             </div>
+
             <div className="block mb-3">
               <div className="flex space-x-3">
                 <div className="flex w-1/2">
@@ -115,7 +120,6 @@ export default function CustomerForm() {
                       id="city"
                       name="city"
                       type="text"
-                      placeholder="City"
                       value={customer.city}
                       onChange={handleChange}
                     />
@@ -136,7 +140,8 @@ export default function CustomerForm() {
               </div>
             </div>
           </div>
-          {/* Nickname, Contact No., & Email Address*/}
+
+          {/* Nickname, Contact No., & Email */}
           <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0">
             <div className="block mb-3">
               <Label htmlFor="nickname">Nickname</Label>
@@ -144,20 +149,16 @@ export default function CustomerForm() {
                 id="nickname"
                 name="nickname"
                 type="text"
-                placeholder="(Optional)"
                 value={customer.nickname}
                 onChange={handleChange}
-                required
               />
             </div>
             <div className="block mb-3">
-              <Label htmlFor="contact-no">Contact No.</Label>
+              <Label htmlFor="contact_no">Contact No.</Label>
               <Input
-                id="contact-no"
+                id="contact_no"
                 name="contact_no"
                 type="tel"
-                pattern="[0-9]{3}-[0-9]{4}"
-                placeholder="012-3456"
                 value={customer.contact_no}
                 onChange={handleChange}
               />
@@ -168,7 +169,6 @@ export default function CustomerForm() {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="example@email.com"
                 value={customer.email}
                 onChange={handleChange}
               />
@@ -182,73 +182,61 @@ export default function CustomerForm() {
         {/* Bottom Section */}
         <div className="flex flex-wrap">
           <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0">
-            <div className="block mb-3">
-              <Label className="-ml-2">Default Rate Charges</Label>
-              <Label htmlFor="volume-charge">By Volume</Label>
-              <Input
-                id="volume-charge"
-                name="rate_volume_charge"
-                type="text"
-                placeholder="Volume Charge"
-                value={customer.rate_volume_charge}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="block mb-3">
-              <Label htmlFor="weight-charge">By Weight</Label>
-              <Input
-                id="weight-charge"
-                name="rate_weigh_charge"
-                type="text"
-                placeholder="Weight Charge"
-                value={customer.rate_weigh_charge}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="block mb-3">
-              <Label htmlFor="value-charge">By Value</Label>
-              <Input
-                id="value-charge"
-                name="rate_value_charge"
-                type="text"
-                placeholder="Value Charge"
-                value={customer.rate_value_charge}
-                onChange={handleChange}
-              />
-            </div>
+            <Label className="-ml-2">Default Rate Charges</Label>
+            <Label htmlFor="rate_volume_charge">By Volume</Label>
+            <Input
+              id="rate_volume_charge"
+              name="rate_volume_charge"
+              type="text"
+              value={customer.rate_volume_charge}
+              onChange={handleChange}
+            />
+            <Label htmlFor="rate_weigh_charge">By Weight</Label>
+            <Input
+              id="rate_weigh_charge"
+              name="rate_weigh_charge"
+              type="text"
+              value={customer.rate_weigh_charge}
+              onChange={handleChange}
+            />
+            <Label htmlFor="rate_value_charge">By Value</Label>
+            <Input
+              id="rate_value_charge"
+              name="rate_value_charge"
+              type="text"
+              value={customer.rate_value_charge}
+              onChange={handleChange}
+            />
           </div>
+
           <div className="w-full md:w-2/3 px-3 mb-3 md:mb-0">
-            <div className="block mb-3">
-              <Label htmlFor="notes">Notes</Label>
-              <TextArea
-                id="notes"
-                name="notes"
-                rows={10}
-                placeholder="Notes"
-                value={customer.notes}
-                onChange={handleChange}
-              />
-            </div>
+            <Label htmlFor="notes">Notes</Label>
+            <TextArea
+              id="notes"
+              name="notes"
+              rows={5}
+              value={customer.notes}
+              onChange={handleChange}
+            />
           </div>
         </div>
       </div>
 
+      {/* Buttons */}
       <div className="flex w-full justify-end space-x-2">
         <button
           type="button"
-          className="rounded-md border px-3 py-2 transition-colors bg-neutral-200 hover:bg-neutral-300 "
-          onClick={() => {
-            router.push("/dashboard/customers");
-          }}
+          className="rounded-md border px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+          onClick={() => router.push(`/dashboard/customers/view/${id}`)}
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isLoading}
-          className="rounded-md border px-3 py-2 text-white transition-colors bg-gray-500 hover:bg-gray-600 "
+          className="rounded-md border px-3 py-2 text-white bg-blue-500 hover:bg-blue-600"
         >
-          {isLoading ? "Creating..." : "Create"}
+          {isLoading ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </form>

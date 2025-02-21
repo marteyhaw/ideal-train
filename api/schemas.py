@@ -252,11 +252,10 @@ class CustomerCreate(CustomerBase):
     pass
 
 
-class CustomerUpdate(CustomerBase):
-    name: str | None = Field(
-        title="Name of Customer", default=None, max_length=50
+class CustomerUpdate(BaseModel):
+    nickname: str | None = Field(
+        title="Nickname of Customer", default=None, max_length=20
     )
-    nickname: str = Field(title="Nickname of Customer", max_length=20)
     address: str | None = Field(
         title="Street Address of Customer", default=None, max_length=100
     )

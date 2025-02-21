@@ -41,7 +41,9 @@ const SideNavItemWithSubMenu = ({
   pathname: string;
 }) => {
   const LinkIcon = item.icon;
-  const preOpenSubmenu = pathname.includes(item.path);
+  const preOpenSubmenu = item.subMenuItems?.some((subItem) =>
+    pathname.includes(subItem.path),
+  );
   const [subMenuOpen, setSubMenuOpen] = useState(preOpenSubmenu);
   const toggleSubMenu = () => {
     setSubMenuOpen(!subMenuOpen);

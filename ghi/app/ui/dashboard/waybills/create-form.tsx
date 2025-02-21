@@ -1,9 +1,11 @@
 "use client";
 
 import {
-  CustomerField,
-  OfficeField,
-  EmployeeField,
+  LocationField,
+  Customer,
+  Employee,
+  Manifest,
+  WaybillCreate,
 } from "@/app/fe-lib/definitions";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Select } from "@/app/ui/forms/select";
@@ -12,37 +14,63 @@ import { Input } from "@/app/ui/forms/input";
 import { TextArea } from "@/app/ui/forms/textarea";
 import Link from "next/link";
 import { useCargo } from "./cargo-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const defaultCustomer: Customer = {
+  id: "",
+  name: "",
+  email: "",
+  contact_no: "",
+};
+
+const defaultEmployee: Employee = {
+  id: "",
+  last_name: "",
+  first_name: "",
+  middle_name: "",
+  email: "",
+};
+
+const defaultManifest: Manifest = {
+  id: "",
+  number: 0,
+  destination: "",
+};
 
 export default function WaybillForm({
   modal,
   customers,
-  offices,
+  locations,
   employees,
 }: {
   modal: React.ReactNode;
-  customers: CustomerField[];
-  offices: OfficeField[];
-  employees: EmployeeField[];
+  customers: Customer[]; // We will be using CustomerField (will be CustomerView) instead but need to create the new models first
+  locations: LocationField[];
+  employees: Employee[];
 }) {
   const { cargoList } = useCargo();
-  const [waybill, setWaybill] = useState<Waybill>({
-    waybillNo: "",
-    consignee: "",
-    consigneeAddress: "",
+  const [waybill, setWaybill] = useState<WaybillCreate>({
+    number: 0,
     destination: "",
-    date: "",
+    shipper: defaultCustomer,
+    consignee: defaultCustomer,
+    origin_address: "",
+    destination_address: "",
+    created_date: new Date(),
+    total_amount: 0,
+    total_weight_charge: 0,
+    total_value_charge: 0,
+    total_cu_msmt_charge: 0,
+    total_delivery_charge: 0,
+    total_vat: 0,
+    payment_terms: "",
+    notes: "",
+    manifest_id: defaultManifest,
+    received_by: defaultEmployee,
+    received_at: Date.now(),
+    encoded_by: defaultEmployee,
+    encoded_on: new Date(),
     cargos: [],
-    shipper: "",
-    shipperAddress: "",
-    receivedAt: "",
-    receivedBy: "",
-    volumeCharge: 0,
-    valueCharge: 0,
-    miscCharge: 0,
-    weightCharge: 0,
-    deliveryCharge: 0,
-    valueAddedTax: 0,
   });
 
   const handleChange = (
@@ -54,20 +82,43 @@ export default function WaybillForm({
     setWaybill({ ...waybill, [name]: value });
   };
 
-  const totalCharges =
-    Number(waybill.volumeCharge) +
-    Number(waybill.valueCharge) +
-    Number(waybill.miscCharge) +
-    Number(waybill.weightCharge) +
-    Number(waybill.deliveryCharge) +
-    Number(waybill.valueAddedTax);
+  // Change these values and make sure its changed throughout file
+  const total_amount =
+    Number(waybill.total_weight_charge) +
+    Number(waybill.total_value_charge) +
+    Number(waybill.total_cu_msmt_charge) +
+    Number(waybill.total_delivery_charge) +
+    Number(waybill.total_vat);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      console.log(JSON.stringify(waybill));
+      const response = await fetch(`http://localhost:8000/api/v1/waybills/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(waybill),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request could not be completed`);
+      }
+
+      const result = await response.json();
+      console.log("SUCCESS:", result);
+    } catch (error) {
+      console.error("ERROR:", error);
+    }
+  };
 
   return (
     <form>
       <div className="w-full">
         <div className="w-1/3">
           <Label htmlFor="waybill-no">Waybill No.</Label>
-          <Input id="text" type="text" placeholder="AR-XXXXXX" />
+          <Input id="text" type="text" name="number" placeholder="AR-XXXXXX" />
         </div>
         {/* Top Section */}
         <div className="flex flex-wrap -mx-3 mb-3">
@@ -88,9 +139,9 @@ export default function WaybillForm({
               <Label htmlFor="consignee-address">Address</Label>
               <TextArea
                 id="consignee-address"
-                name="consigneeAddress"
+                name="destination_address"
                 rows={4}
-                value={waybill.consigneeAddress}
+                value={waybill.destination_address}
                 onChange={handleChange}
               />
             </div>
@@ -103,7 +154,7 @@ export default function WaybillForm({
                 label="Destination"
                 id="destination"
                 name="destination"
-                selectOptions={offices}
+                selectOptions={locations}
                 value={waybill.destination}
                 onChange={handleChange}
               />
@@ -112,9 +163,9 @@ export default function WaybillForm({
               <Label htmlFor="date">Date</Label>
               <Input
                 id="date"
-                name="date"
+                name="encoded_on"
                 type="date"
-                value={waybill.date}
+                value={waybill.encoded_on}
                 onChange={handleChange}
               />
             </div>
@@ -231,9 +282,9 @@ export default function WaybillForm({
               <Label htmlFor="shipper-address">Address</Label>
               <TextArea
                 id="shipper-address"
-                name="shipperAddress"
+                name="origin_address"
                 rows={4}
-                value={waybill.shipperAddress}
+                value={waybill.origin_address}
                 onChange={handleChange}
               />
             </div>
@@ -246,8 +297,8 @@ export default function WaybillForm({
                 label="Received At"
                 id="received-at"
                 name="receivedAt"
-                selectOptions={offices}
-                value={waybill.receivedAt}
+                selectOptions={locations}
+                value={waybill.received_at}
                 onChange={handleChange}
               />
             </div>
@@ -257,7 +308,7 @@ export default function WaybillForm({
                 id="received-by"
                 name="receivedBy"
                 selectOptions={employees}
-                value={waybill.receivedBy}
+                value={waybill.received_by}
                 onChange={handleChange}
               />
             </div>
@@ -267,10 +318,10 @@ export default function WaybillForm({
       {/* Total Freight Charges */}
       <div className="flex justify-between w-full py-4 pr-8">
         <Label htmlFor="total-freight-charge">Total Freight Charges</Label>
-        {totalCharges === 0 ? (
+        {total_amount === 0 ? (
           <p className="text-right">$0.00</p>
         ) : (
-          <p className="text-right">${totalCharges}</p>
+          <p className="text-right">${total_amount}</p>
         )}
       </div>
       <div className="flex flex-wrap -mx-3 mb-3">
@@ -279,9 +330,9 @@ export default function WaybillForm({
             <Label htmlFor="volume-charge">Volume Charge</Label>
             <Input
               id="volume-charge"
-              name="volumeCharge"
+              name="total_cu_msmt_charge"
               type="number"
-              value={waybill.volumeCharge}
+              value={waybill.total_cu_msmt_charge}
               onChange={handleChange}
             />
           </div>
@@ -289,9 +340,9 @@ export default function WaybillForm({
             <Label htmlFor="weight-charge">Weight Charge</Label>
             <Input
               id="weight-charge"
-              name="weightCharge"
+              name="total_weight_charge"
               type="number"
-              value={waybill.weightCharge}
+              value={waybill.total_weight_charge}
               onChange={handleChange}
             />
           </div>
@@ -301,9 +352,9 @@ export default function WaybillForm({
             <Label htmlFor="value-charge">Value Charge</Label>
             <Input
               id="value-charge"
-              name="valueCharge"
+              name="total_value_charge"
               type="number"
-              value={waybill.valueCharge}
+              value={waybill.total_value_charge}
               onChange={handleChange}
             />
           </div>
@@ -311,31 +362,21 @@ export default function WaybillForm({
             <Label htmlFor="delivery-charge">Delivery Charge</Label>
             <Input
               id="delivery-charge"
-              name="deliveryCharge"
+              name="total_delivery_charge"
               type="number"
-              value={waybill.deliveryCharge}
+              value={waybill.total_delivery_charge}
               onChange={handleChange}
             />
           </div>
         </div>
         <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0">
           <div className="block mb-3">
-            <Label htmlFor="misc-charge">Misc Charge</Label>
-            <Input
-              id="misc-charge"
-              name="miscCharge"
-              type="number"
-              value={waybill.miscCharge}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="block mb-3">
             <Label htmlFor="value-added-tax">Value-Added Tax</Label>
             <Input
               id="value-added-tax"
-              name="valueAddedTax"
+              name="total_vat"
               type="number"
-              value={waybill.valueAddedTax}
+              value={waybill.total_vat}
               onChange={handleChange}
             />
           </div>
