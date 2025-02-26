@@ -23,4 +23,4 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    DATABASE_URI: str
+    DATABASE_URI: str = "sqlite:///./sql_app.db"

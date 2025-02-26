@@ -13,9 +13,8 @@ load_dotenv()
 config = context.config
 
 # use DB URI from env
-connection_string = os.getenv(
-    "DATABASE_URI", "driver://user:pass@localhost/dbname"
-)
+connection_string = os.getenv("DATABASE_URI", "sqlite:///./sql_app.db")
+
 config.set_main_option("sqlalchemy.url", connection_string)
 
 # Interpret the config file for Python logging.
