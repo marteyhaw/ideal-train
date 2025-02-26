@@ -9,6 +9,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CustomerCreate } from "@/app/fe-lib/definitions";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 const defaultCountry = "PH";
 
 export default function CustomerForm() {
@@ -50,7 +52,7 @@ export default function CustomerForm() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/customers/`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/customers/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
