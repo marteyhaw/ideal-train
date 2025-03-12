@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 
 class CargoBase(BaseModel):
@@ -503,6 +503,36 @@ class ManifestStatusLog(ManifestStatusLogBase):
 
     class Config:
         from_attributes = True
+
+
+class RolesUpdate(BaseModel):
+    roles: str
+
+
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    roles: str
+
+    class Config:
+        from_attributes = True
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class User(UserBase):
+    id: str
+
+
+class UserLogin(BaseModel):
+    """
+    Schema for logging in a user.
+    """
+
+    username: str
+    password: str
 
 
 class WaybillBase(BaseModel):

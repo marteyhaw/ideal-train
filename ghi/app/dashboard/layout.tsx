@@ -1,8 +1,28 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import TopNav from "@/app/ui/topnav";
 import SideNav from "@/app/ui/dashboard/sidenav";
 import { CargoProvider } from "../ui/dashboard/waybills/cargo-context";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="));
+
+    if (!token) {
+      router.push("/login");
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+
   return (
     <CargoProvider>
       <div>

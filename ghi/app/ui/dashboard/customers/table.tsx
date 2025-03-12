@@ -32,6 +32,15 @@ export default function CustomersTable() {
       <div className="md:hidden">
         {loading ? (
           <p className="text-center py-4">Loading...</p>
+        ) : customers.length === 0 ? (
+          <tr>
+            <td
+              colSpan={customerFields.length + 1}
+              className="text-center py-4 text-gray-500"
+            >
+              No customers found.
+            </td>
+          </tr>
         ) : (
           customers.map((customer: Customer) => (
             <div
@@ -90,6 +99,15 @@ export default function CustomersTable() {
                 className="text-center py-4"
               >
                 Loading...
+              </td>
+            </tr>
+          ) : customers.length === 0 ? (
+            <tr>
+              <td
+                colSpan={customerFields.length + 1}
+                className="text-center py-4 text-gray-500"
+              >
+                No customers found.
               </td>
             </tr>
           ) : (

@@ -10,6 +10,7 @@ from models import (
     Location,
     Manifest,
     ManifestStatusLog,
+    User,
     Waybill,
     WaybillStatusLog,
 )
@@ -631,3 +632,19 @@ def create_location(db: Session, location: schemas.LocationCreate) -> Location:
     db.refresh(db_location)
 
     return db_location
+
+
+# USER
+def update_user_roles(db: Session, user_id: UUID, new_roles: str):
+    """
+    Update a user's roles in the database.
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        return None
+
+    user.roles = new_roles
+    db.commit()
+    db.refresh(user)
+
+    return user

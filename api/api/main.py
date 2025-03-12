@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 
 from api.routes import (
+    admin,
+    auth,
     cargos,
     carriers,
     customers,
@@ -10,6 +12,8 @@ from api.routes import (
 )
 
 api_router = APIRouter()
+api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
+api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(cargos.router, prefix="/cargos", tags=["cargos"])
 api_router.include_router(
     carriers.router, prefix="/carriers", tags=["carriers"]

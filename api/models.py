@@ -135,6 +135,9 @@ class Employee(Base):
             foreign_keys="ManifestStatusLog.logged_by_employee_id",
         )
     )
+    user: Mapped["User"] = relationship(
+        "User", back_populates="employee", uselist=False
+    )
     waybills_received: Mapped[list["Waybill"]] = relationship(
         back_populates="received_by",
         foreign_keys="Waybill.received_by_employee_id",
@@ -224,6 +227,33 @@ class ManifestStatusLog(Base):
         back_populates="status_logs", foreign_keys=manifest_id
     )
     notes: Mapped[str | None] = Column(String(500))
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        types.Uuid, primary_key=True, default=uuid.uuid4
+    )
+    username = Column(String(50), unique=True, nullable=False, index=True)
+    email = Column(String(80), unique=True, nullable=False, index=True)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+
+    employee_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("employees.id"),
+        unique=True,
+        nullable=False,
+    )
+    employee = relationship("Employee", back_populates="user")
+
+    roles = Column(String, default="")
+
+    def has_role(self, required_roles: list[str]) -> bool:
+        """Check if the user has at least one of the required roles."""
+        user_roles = self.roles.split(",")
+        return any(role in user_roles for role in required_roles)
 
 
 class Waybill(Base):

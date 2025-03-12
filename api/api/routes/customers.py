@@ -3,6 +3,7 @@ from uuid import UUID
 import crud
 import schemas
 from fastapi import APIRouter, Depends, HTTPException
+from security import oauth2_scheme
 from sqlalchemy.orm import Session
 
 from api.deps import get_db
@@ -52,6 +53,7 @@ def loose_search_customers(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
 ):
     """
     Get a list of customers using one phrase by searching the following fields:
