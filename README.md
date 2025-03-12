@@ -57,9 +57,15 @@ docker compose -f docker-compose.dev.yml build
 docker compose -f docker-compose.dev.yml up
 ```
 
-### 7. The GHI is accessible at [localhost:3000](http://localhost:3000/)
+### 7. ONE-TIME: Run initial database migrations within API container terminal/exec
 
-### 8. The API is accessible at [localhost:8000/docs](http://localhost:8000/docs)
+```
+alembic upgrade head
+```
+
+### 8. The GHI is accessible at [localhost:3000](http://localhost:3000/)
+
+### 9. The API is accessible at [localhost:8000/docs](http://localhost:8000/docs)
 
 ## Need to reset your PostgreSQL database?
 
@@ -91,6 +97,12 @@ docker volume create pg-admin_data
 docker compose -f docker-compose.dev.yml up
 ```
 
+### 6. Run initial database migrations within API container terminal/exec
+
+```
+alembic upgrade head
+```
+
 ## Installing Pre-commit
 
 #### Instructions from https://pre-commit.com/
@@ -101,7 +113,8 @@ docker compose -f docker-compose.dev.yml up
 
         pip install pre-commit
 
-- In a python project, add the following to your requirements.txt (or requirements-dev.txt):
+- In a python project, add the following to your requirements.txt (or
+  requirements-dev.txt):
 
         pre-commit
 
